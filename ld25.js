@@ -24,7 +24,12 @@ var jsApp = {
 	loaded: function()
 	{
 		me.state.set( me.state.PLAY, new PlayScreen() );
+
+        me.entityPool.add( "player", Player );
+        me.entityPool.add( "enemy", Enemy );
+
 		me.state.change( me.state.PLAY );
+        me.debug.renderHitBox = true;
 	}
 };
 
