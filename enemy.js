@@ -1,9 +1,9 @@
-/**
+/*
  * enemy.js
  *
  * Defines basic enemy type.
  *
- * Author: Andrew Ford
+ * @author Adhesion
  */
 
 var Enemy = me.ObjectEntity.extend(

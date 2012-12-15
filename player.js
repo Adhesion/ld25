@@ -1,9 +1,9 @@
-/**
+/*
  * player.js
  *
  * Defines the main player.
  *
- * Author: Andrew Ford
+ * @author Adhesion
  */
 
 var Player = me.ObjectEntity.extend(
