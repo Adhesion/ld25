@@ -12,12 +12,16 @@ var gameResources = [
     { name: "weakattack", type: "image", src: "data/tempattack.png" },
     { name: "strongattack", type: "image", src: "data/tempattack.png" },
 
-	{ name: "collision_tiles", type: "image", src: "data/collision_tiles.png" },
-	{ name: "maptile", type: "image", src: "data/maptile.png" },
+    { name: "collision_tiles", type: "image", src: "data/collision_tiles.png" },
+    { name: "maptile", type: "image", src: "data/maptile.png" },
 
+    { name: "boxyrooms", type: "tmx", src: "data/boxyrooms.tmx" },
     { name: "testlevel", type: "tmx", src: "data/testlevel.tmx" },
-	{ name: "fudge", type: "tmx", src: "data/fudge.tmx" },
-	{ name: "16x16_font", type: "image", src: "data/16x16_font.png" },
-	{ name: "32x32_font", type: "image", src: "data/32x32_font.png" },
-	{ name: "64x64_font", type: "image", src: "data/64x64_font.png" }
+    { name: "fudge", type: "tmx", src: "data/fudge.tmx" },
+
+    { name: "progressbar", type: "image", src: "data/bar.png" },
+
+    { name: "16x16_font", type: "image", src: "data/16x16_font.png" },
+    { name: "32x32_font", type: "image", src: "data/32x32_font.png" },
+    { name: "64x64_font", type: "image", src: "data/64x64_font.png" }
 ];
