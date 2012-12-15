@@ -33,6 +33,8 @@ var Player = me.ObjectEntity.extend(
         me.game.viewport.follow( this.pos, me.game.viewport.AXIS.BOTH );
         me.game.viewport.setDeadzone( me.game.viewport.width / 10,
                                       me.game.viewport.height / 10 );
+
+        me.game.player = this;
     },
 
     attack: function( type )

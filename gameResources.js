@@ -7,6 +7,8 @@
  */
 
 var gameResources = [
+    { name: "testenemy", type: "image", src: "data/tempenemy.png" },
+
     { name: "player", type: "image", src: "data/avatar.png" },
     { name: "enemy", type: "image", src: "data/tempenemy.png" },
     { name: "weakattack", type: "image", src: "data/tempattack.png" },

@@ -34,23 +34,23 @@ var jsApp = {
 };
 
 var PlayScreen = me.ScreenObject.extend({
-	init: function()
-	{
-		this.parent( true );
-		me.input.bindKey( me.input.KEY.ENTER, "enter", true );
-	},
+    init: function()
+    {
+        this.parent( true );
+        me.input.bindKey( me.input.KEY.ENTER, "enter", true );
+    },
 
-	getLevel: function()
-	{
-		return this.parseLevel( me.levelDirector.getCurrentLevelId() );
-	},
+    getLevel: function()
+    {
+        return this.parseLevel( me.levelDirector.getCurrentLevelId() );
+    },
 
-	parseLevel: function( input )
-	{
-		var re = /level(\d+)/;
-		var results = re.exec( input );
-		return results[1];
-	},
+    parseLevel: function( input )
+    {
+        var re = /level(\d+)/;
+        var results = re.exec( input );
+        return results[1];
+    },
 
     updateTimer: function() {
         if( me.game.HUD.getItemValue( "timer" ) <= 0 ) {
@@ -80,15 +80,22 @@ var PlayScreen = me.ScreenObject.extend({
 	{
 	},
 
-	startLevel: function( level )
-	{
-		// this only gets called on start?
-		me.levelDirector.loadLevel( level );
-		me.game.sort();
-		this.orb = new Orb( 300, 300 );
-		me.game.add( this.orb, 10 );
-		this.changeLevel();
-	},
+    startLevel: function( level )
+    {
+        // this only gets called on start?
+        me.levelDirector.loadLevel( level );
+        me.game.sort();
+
+
+        this.hugger = new Hugger( 500, 1300, {
+            image: 'testenemy',
+            spritewidth: 48,
+            spriteheight: 48
+        });
+
+        me.game.add( this.hugger, 10 );
+        this.changeLevel();
+    },
 
     // this will be called on state change -> this
     onResetEvent: function()
