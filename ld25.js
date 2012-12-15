@@ -5,28 +5,31 @@
 */
 
 var jsApp = {
-	onload: function()
-	{
-		if ( !me.video.init( 'game', 1152, 720 ) )
-		{
-			alert( "Sorry, it appears your browser does not support HTML5." );
-			return;
-		}
+    onload: function()
+    {
+        if ( !me.video.init( 'game', 1152, 720 ) )
+        {
+            alert( "Sorry, it appears your browser does not support HTML5." );
+            return;
+        }
 
-		me.audio.init( "mp3,ogg" );
+        me.audio.init( "mp3,ogg" );
 
-		me.loader.onload = this.loaded.bind( this );
-		me.loader.preload( gameResources );
+        me.loader.onload = this.loaded.bind( this );
+        me.loader.preload( gameResources );
 
-		me.state.change( me.state.LOADING );
-	},
+        me.state.change( me.state.LOADING );
+    },
 
     loaded: function()
     {
         me.state.set( me.state.PLAY, new PlayScreen() );
 
         me.entityPool.add( "player", Player );
-        me.entityPool.add( "enemy", Enemy );
+        me.entityPool.add( "hugger", Hugger );
+        me.entityPool.add( "pusher", Pusher );
+        me.entityPool.add( "orb", Orb );
+        me.entityPool.add( "lastorb", Orb );
 
         me.state.change( me.state.PLAY );
         me.debug.renderHitBox = true;
@@ -71,14 +74,14 @@ var PlayScreen = me.ScreenObject.extend({
         this.updateTimer();
     },
 
-	/** Update the level display & music. Called on all level changes. */
-	changeLevel: function( )
-	{
-	},
+    /** Update the level display & music. Called on all level changes. */
+    changeLevel: function( )
+    {
+    },
 
-	getCurrentMusic: function()
-	{
-	},
+    getCurrentMusic: function()
+    {
+    },
 
     startLevel: function( level )
     {
@@ -87,13 +90,9 @@ var PlayScreen = me.ScreenObject.extend({
         me.game.sort();
 
 
-        this.hugger = new Hugger( 500, 1300, {
-            image: 'testenemy',
-            spritewidth: 48,
-            spriteheight: 48
-        });
+        me.game.add( new Hugger( 900, 1300, {} ), 10 );
+        me.game.add( new Pusher( 500, 1300, { direction: 'down' } ), 10 );
 
-        me.game.add( this.hugger, 10 );
         this.changeLevel();
     },
 
@@ -103,18 +102,18 @@ var PlayScreen = me.ScreenObject.extend({
         me.game.addHUD( 0, 0, me.video.getWidth(), me.video.getHeight() );
         me.game.HUD.addItem( "timer", new CountDown());
 
-        this.startLevel( location.hash.substr(1) || "fudge" );
+        this.startLevel( location.hash.substr(1) || "level1" );
         me.input.bindKey( me.input.KEY.ENTER, "enter", true );
     },
 
-	onDestroyEvent: function()
-	{
-		me.input.unbindKey(me.input.KEY.ENTER);
-		me.game.disableHUD();
-	}
+    onDestroyEvent: function()
+    {
+        me.input.unbindKey(me.input.KEY.ENTER);
+        me.game.disableHUD();
+    }
 });
 
 window.onReady( function()
 {
-	jsApp.onload();
+    jsApp.onload();
 });

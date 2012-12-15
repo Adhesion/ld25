@@ -17,11 +17,9 @@ var gameResources = [
     { name: "collision_tiles", type: "image", src: "data/collision_tiles.png" },
     { name: "maptile", type: "image", src: "data/maptile.png" },
 
+    { name: "level1", type: "tmx", src: "data/level1.tmx" },
     { name: "boxyrooms", type: "tmx", src: "data/boxyrooms.tmx" },
     { name: "testlevel", type: "tmx", src: "data/testlevel.tmx" },
-    { name: "fudge", type: "tmx", src: "data/fudge.tmx" },
-
-    { name: "progressbar", type: "image", src: "data/bar.png" },
 
     { name: "16x16_font", type: "image", src: "data/16x16_font.png" },
     { name: "32x32_font", type: "image", src: "data/32x32_font.png" },
