@@ -16,11 +16,33 @@ var Player = me.ObjectEntity.extend(
         this.origVelocity = new me.Vector2d( 7.0, 7.0 );
         this.setVelocity( this.origVelocity.x, this.origVelocity.y );
         this.setFriction( 0.35, 0.35 );
-        this.direction = new me.Vector2d( 0.0, 0.0 );
+        this.direction = new me.Vector2d( 0.0, 1.0 );
+        this.directionString = "down";
 
         this.dashTimer = 0;
+        this.dashTimerMax = 40;
+        this.dashCooldown = 20;
+
+        this.weakAttackTimer = 0;
+        this.strongAttackTimer = 0;
 
         this.updateColRect( 22, 52, 10, 76 );
+
+        var directions = [ "down", "left", "up", "right" ];
+        for ( var i = 0; i < 4; i++ )
+        {
+            var index = i * 7;
+            this.addAnimation( directions[ i ] + "idle", [ index ] );
+            this.addAnimation( directions[ i ] + "run",
+                [ index, index + 1, index, index + 2 ] );
+            this.addAnimation( directions[ i ] + "dash", [ index + 3 ] );
+            this.addAnimation( directions[ i ] + "weakAttack",
+                [ index, index + 4, index, index + 5 ] );
+            this.addAnimation( directions[ i ] + "strongAttack",
+                [ index + 6 ] );
+        }
+
+        this.setCurrentAnimation( "downidle" );
 
         me.input.bindKey( me.input.KEY.LEFT, "left" );
         me.input.bindKey( me.input.KEY.RIGHT, "right" );
@@ -37,9 +59,14 @@ var Player = me.ObjectEntity.extend(
         me.game.player = this;
     },
 
+    isDashing: function()
+    {
+        return this.dashTimer > this.dashCooldown;
+    },
+
     attack: function( type )
     {
-
+        console.log( "attack " + type );
     },
 
     // fix for multiple collision - if attack sprites are checking collision,
@@ -56,44 +83,85 @@ var Player = me.ObjectEntity.extend(
     checkInput: function()
     {
         var tempDir = new me.Vector2d( 0.0, 0.0 );
-        if ( me.input.isKeyPressed( "left" ) )
+        if ( !this.isDashing() && this.weakAttackTimer == 0 && this.strongAttackTimer == 0 )
         {
-            tempDir.x = -1.0;
-        }
-        if ( me.input.isKeyPressed( "right" ) )
-        {
-            tempDir.x = 1.0;
-        }
-        if ( me.input.isKeyPressed( "up" ) )
-        {
-            tempDir.y = -1.0;
-        }
-        if ( me.input.isKeyPressed( "down" ) )
-        {
-            tempDir.y = 1.0;
+            if ( me.input.isKeyPressed( "left" ) )
+            {
+                tempDir.x = -1.0;
+                this.directionString = "left";
+            }
+            if ( me.input.isKeyPressed( "right" ) )
+            {
+                tempDir.x = 1.0;
+                this.directionString = "right";
+            }
+            if ( me.input.isKeyPressed( "up" ) )
+            {
+                tempDir.y = -1.0;
+                this.directionString = "up";
+            }
+            if ( me.input.isKeyPressed( "down" ) )
+            {
+                tempDir.y = 1.0;
+                this.directionString = "down";
+            }
+
+            if ( tempDir.x != 0.0 || tempDir.y != 0.0 )
+            {
+                this.vel.x += tempDir.x * this.accel.x * me.timer.tick;
+                this.vel.y += tempDir.y * this.accel.y * me.timer.tick;
+                this.direction = tempDir;
+            }
         }
 
-        if ( tempDir.x != 0.0 || tempDir.y != 0.0 )
+        // all attacks have to be on cooldown
+        if ( this.weakAttackTimer == 0 && this.strongAttackTimer == 0 )
         {
-            this.vel.x += tempDir.x * this.accel.x * me.timer.tick;
-            this.vel.y += tempDir.y * this.accel.y * me.timer.tick;
-            this.direction = tempDir;
+            if ( me.input.isKeyPressed( "weakAttack" ) )
+            {
+                console.log( "flksdjdfa" );
+                this.weakAttackTimer = 30;
+            }
+            else if ( me.input.isKeyPressed( "strongAttack" ) )
+            {
+                this.attack( "strongAttack" );
+                this.strongAttackTimer = 20;
+            }
         }
 
-        if ( me.input.isKeyPressed( "weakAttack") )
-        {
-            console.log( "weak attack" );
-        }
-        else if ( me.input.isKeyPressed( "strongAttack" ) )
-        {
-            console.log( "strong attack" );
-        }
-
+        // dash also has to be on cooldown
         if ( me.input.isKeyPressed( "dash" ) && this.dashTimer == 0 )
         {
             this.setMaxVelocity( this.origVelocity.x * 2.5,
                                  this.origVelocity.y * 2.5 );
-            this.dashTimer = 40;
+            this.dashTimer = this.dashTimerMax;
+        }
+    },
+
+    updateAnimation: function()
+    {
+        if ( this.isDashing() )
+        {
+            this.setCurrentAnimation( this.directionString + "dash" );
+        }
+        else if ( this.weakAttackTimer > 0 )
+        {
+            console.log( "ATTACKING WEAKlakj" );
+            this.setCurrentAnimation( this.directionString + "weakAttack" );
+            if ( this.weakAttackTimer == 30 )
+                this.setAnimationFrame();
+        }
+        else if ( this.strongAttackTimer > 0 )
+        {
+            this.setCurrentAnimation( this.directionString + "strongAttack" );
+        }
+        else if ( this.vel.x != 0.0 || this.vel.y != 0.0 )
+        {
+            this.setCurrentAnimation( this.directionString + "run" );
+        }
+        else if ( this.weakAttackTimer == 0 && this.strongAttackTimer == 0 )
+        {
+            this.setCurrentAnimation( this.directionString + "idle" );
         }
     },
 
@@ -101,17 +169,25 @@ var Player = me.ObjectEntity.extend(
     {
         this.checkInput();
 
+        this.updateAnimation();
+
         if ( this.dashTimer > 0 )
         {
             this.dashTimer--;
-            if ( this.dashTimer > 20 )
+            if ( this.isDashing() )
             {
                 this.vel.x += this.direction.x * this.accel.x * me.timer.tick;
                 this.vel.y += this.direction.y * this.accel.y * me.timer.tick;
             }
-            else if ( this.dashTimer == 20 )
+            // only need to do this once
+            else if ( this.dashTimer == this.dashCooldown )
                 this.setMaxVelocity( this.origVelocity.x, this.origVelocity.y );
         }
+
+        if ( this.weakAttackTimer > 0 )
+            this.weakAttackTimer--;
+        if ( this.strongAttackTimer > 0 )
+            this.strongAttackTimer--;
 
         // stupid hack to make diagonal movement obey max velocity
         // (we can just use x since both components are the same)
@@ -124,12 +200,8 @@ var Player = me.ObjectEntity.extend(
 
         this.updateMovement();
 
-        if ( this.vel.x != 0 || this.vel.y != 0 )
-        {
-            this.parent( this );
-            return true;
-        }
-        return false;
+        this.parent( this );
+        return true;
     }
 });
 
