@@ -24,6 +24,7 @@ var Player = me.ObjectEntity.extend(
         this.dashCooldown = 20;
 
         this.weakAttackTimer = 0;
+        this.weakAttackType = 0;
         this.strongAttackTimer = 0;
 
         this.updateColRect( 22, 52, 10, 76 );
@@ -36,13 +37,16 @@ var Player = me.ObjectEntity.extend(
             this.addAnimation( directions[ i ] + "run",
                 [ index, index + 1, index, index + 2 ] );
             this.addAnimation( directions[ i ] + "dash", [ index + 3 ] );
-            this.addAnimation( directions[ i ] + "weakAttack",
-                [ index, index + 4, index, index + 5 ] );
+            this.addAnimation( directions[ i ] + "weakAttack0",
+                [ index + 4 ] );
+            this.addAnimation( directions[ i ] + "weakAttack1",
+                [ index + 5 ] );
             this.addAnimation( directions[ i ] + "strongAttack",
                 [ index + 6 ] );
         }
 
         this.setCurrentAnimation( "downidle" );
+        this.animationspeed = 5;
 
         me.input.bindKey( me.input.KEY.LEFT, "left" );
         me.input.bindKey( me.input.KEY.RIGHT, "right" );
@@ -66,7 +70,7 @@ var Player = me.ObjectEntity.extend(
 
     attack: function( type )
     {
-        console.log( "attack " + type );
+
     },
 
     // fix for multiple collision - if attack sprites are checking collision,
@@ -83,7 +87,8 @@ var Player = me.ObjectEntity.extend(
     checkInput: function()
     {
         var tempDir = new me.Vector2d( 0.0, 0.0 );
-        if ( !this.isDashing() && this.weakAttackTimer == 0 && this.strongAttackTimer == 0 )
+        if ( !this.isDashing() && this.weakAttackTimer == 0 &&
+            this.strongAttackTimer < 30 )
         {
             if ( me.input.isKeyPressed( "left" ) )
             {
@@ -119,11 +124,14 @@ var Player = me.ObjectEntity.extend(
         {
             if ( me.input.isKeyPressed( "weakAttack" ) )
             {
-                this.weakAttackTimer = 30;
+                this.weakAttackTimer = 15;
+                this.weakAttackType = ++this.weakAttackType % 2;
+                this.attack( "weakAttack" );
             }
             else if ( me.input.isKeyPressed( "strongAttack" ) )
             {
-                this.strongAttackTimer = 20;
+                this.strongAttackTimer = 45;
+                this.attack( "strongAttack" );
             }
         }
 
@@ -142,13 +150,12 @@ var Player = me.ObjectEntity.extend(
         {
             this.setCurrentAnimation( this.directionString + "dash" );
         }
-        else if ( this.weakAttackTimer > 0 )
+        else if ( this.weakAttackTimer > 5 )
         {
-            this.setCurrentAnimation( this.directionString + "weakAttack" );
-            if ( this.weakAttackTimer == 30 )
-                this.setAnimationFrame();
+            this.setCurrentAnimation( this.directionString + "weakAttack" +
+                this.weakAttackType );
         }
-        else if ( this.strongAttackTimer > 0 )
+        else if ( this.strongAttackTimer > 30 )
         {
             this.setCurrentAnimation( this.directionString + "strongAttack" );
         }
@@ -156,7 +163,7 @@ var Player = me.ObjectEntity.extend(
         {
             this.setCurrentAnimation( this.directionString + "run" );
         }
-        else if ( this.weakAttackTimer == 0 && this.strongAttackTimer == 0 )
+        else
         {
             this.setCurrentAnimation( this.directionString + "idle" );
         }
