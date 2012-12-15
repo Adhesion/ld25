@@ -13,11 +13,14 @@ var Player = me.ObjectEntity.extend(
         this.parent( x, y, settings );
 
         this.gravity = 0.0;
-        this.setVelocity( 7.0, 7.0 );
+        this.origVelocity = new me.Vector2d( 7.0, 7.0 );
+        this.setVelocity( this.origVelocity.x, this.origVelocity.y );
         this.setFriction( 0.35, 0.35 );
         this.direction = new me.Vector2d( 0.0, 0.0 );
 
         this.dashTimer = 0;
+
+        this.updateColRect( 22, 52, 10, 76 );
 
         me.input.bindKey( me.input.KEY.LEFT, "left" );
         me.input.bindKey( me.input.KEY.RIGHT, "right" );
@@ -85,9 +88,9 @@ var Player = me.ObjectEntity.extend(
 
         if ( me.input.isKeyPressed( "dash" ) && this.dashTimer == 0 )
         {
-            this.dashTimer = 30;
-            this.vel.x = this.direction.x * 28.0;
-            this.vel.y = this.direction.y * 28.0;
+            this.setMaxVelocity( this.origVelocity.x * 2.5,
+                                 this.origVelocity.y * 2.5 );
+            this.dashTimer = 40;
         }
     },
 
@@ -95,7 +98,17 @@ var Player = me.ObjectEntity.extend(
     {
         this.checkInput();
 
-        if ( this.dashTimer > 0 ) this.dashTimer--;
+        if ( this.dashTimer > 0 )
+        {
+            this.dashTimer--;
+            if ( this.dashTimer > 20 )
+            {
+                this.vel.x += this.direction.x * this.accel.x * me.timer.tick;
+                this.vel.y += this.direction.y * this.accel.y * me.timer.tick;
+            }
+            else if ( this.dashTimer == 20 )
+                this.setMaxVelocity( this.origVelocity.x, this.origVelocity.y );
+        }
 
         this.updateMovement();
 
