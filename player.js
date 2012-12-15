@@ -31,7 +31,8 @@ var Player = me.ObjectEntity.extend(
         me.input.bindKey( me.input.KEY.V, "dash", true );
 
         me.game.viewport.follow( this.pos, me.game.viewport.AXIS.BOTH );
-        me.game.viewport.setDeadzone( me.game.viewport.width / 10, 1 );
+        me.game.viewport.setDeadzone( me.game.viewport.width / 10,
+                                      me.game.viewport.height / 10 );
     },
 
     attack: function( type )
@@ -108,6 +109,15 @@ var Player = me.ObjectEntity.extend(
             }
             else if ( this.dashTimer == 20 )
                 this.setMaxVelocity( this.origVelocity.x, this.origVelocity.y );
+        }
+
+        // stupid hack to make diagonal movement obey max velocity
+        // (we can just use x since both components are the same)
+        if ( this.vel.x != 0.0 && this.vel.y != 0.0 && this.vel.length() > this.maxVel.x )
+        {
+            var ratio = this.maxVel.x / this.vel.length();
+            this.vel.x = this.vel.x * ratio;
+            this.vel.y  = this.vel.y * ratio;
         }
 
         this.updateMovement();
