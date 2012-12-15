@@ -119,12 +119,10 @@ var Player = me.ObjectEntity.extend(
         {
             if ( me.input.isKeyPressed( "weakAttack" ) )
             {
-                console.log( "flksdjdfa" );
                 this.weakAttackTimer = 30;
             }
             else if ( me.input.isKeyPressed( "strongAttack" ) )
             {
-                this.attack( "strongAttack" );
                 this.strongAttackTimer = 20;
             }
         }
@@ -146,7 +144,6 @@ var Player = me.ObjectEntity.extend(
         }
         else if ( this.weakAttackTimer > 0 )
         {
-            console.log( "ATTACKING WEAKlakj" );
             this.setCurrentAnimation( this.directionString + "weakAttack" );
             if ( this.weakAttackTimer == 30 )
                 this.setAnimationFrame();
