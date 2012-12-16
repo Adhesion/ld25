@@ -42,10 +42,9 @@ var Enemy = me.ObjectEntity.extend({
     {
         if( obj.type == "weakAttack" || obj.type == "strongAttack" )
         {
-            console.log( "hit by attack res", res.toString() );
             this.hp -= 1;
-            this.vel.x += res.x * 10.0;
-            this.vel.y += res.y * 10.0;
+            this.vel.x += res.x * 100.0;
+            this.vel.y += res.y * 100.0;
         }
     }
 });
@@ -54,10 +53,10 @@ var Hugger = Enemy.extend({
     init: function( x, y, settings )
     {
         this.range = settings.range || 200;
-        this.speed = settings.speed || 6;
+        this.speed = settings.speed || .6;
         this.parent( x, y, settings );
 
-        this.setMaxVelocity(10, 10);
+        this.setMaxVelocity( 6, 6 );
         this.setFriction( 0.35, 0.35 );
     },
 
@@ -72,8 +71,8 @@ var Hugger = Enemy.extend({
             var dist = direction.length();
             if( dist < this.range && dist > 0) {
                 direction.normalize();
-                this.vel.x = direction.x * this.speed;
-                this.vel.y = direction.y * this.speed;
+                this.vel.x += direction.x * this.speed;
+                this.vel.y += direction.y * this.speed;
                 this.direction = direction;
                 move = true;
             }
@@ -93,7 +92,7 @@ var Hugger = Enemy.extend({
 var Pusher = Enemy.extend({
     init: function( x, y, settings ) {
         this.range = settings.range || 200;
-        this.speed = settings.speed || 6;
+        this.speed = settings.speed || .6;
         if( settings.direction == 'left' ) {
             this.direction = new me.Vector2d( -1, 0 );
         }
@@ -110,6 +109,7 @@ var Pusher = Enemy.extend({
             throw "Pusher needs a direction.";
         }
         this.parent( x, y, settings );
+        this.setMaxVelocity( 6, 6 );
     },
 
     /* When the player gets close, move in a straight line */
@@ -121,8 +121,8 @@ var Pusher = Enemy.extend({
         if( direction ) {
             var dist = direction.length();
             if( dist < this.range && dist > 0) {
-                this.vel.x = this.speed * this.direction.x;
-                this.vel.y = this.speed * this.direction.y;
+                this.vel.x += this.speed * this.direction.x;
+                this.vel.y += this.speed * this.direction.y;
             }
         }
 

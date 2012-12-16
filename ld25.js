@@ -40,9 +40,7 @@ var jsApp = {
 var PlayScreen = me.ScreenObject.extend({
     init: function()
     {
-        this.parent( true );
-        // Doors in this current level
-        me.input.bindKey( me.input.KEY.ENTER, "enter", true );
+        this.parent( true, true );
     },
 
     getLevel: function()
@@ -54,20 +52,20 @@ var PlayScreen = me.ScreenObject.extend({
     {
         var re = /level(\d+)/;
         var results = re.exec( input );
-        return results[1];
+        return parseInt(results[1]);
     },
 
     updateTimer: function() {
         if( me.game.HUD.getItemValue( "timer" ) <= 0 ) {
             this.timerStart = me.timer.getTime();
-            me.game.HUD.setItemValue( "timer" , 60000 );
+            me.game.HUD.setItemValue( "timer" , 60.0 );
         }
         else {
-            var v = ( ( 60000 - ( me.timer.getTime() - this.timerStart ) ) / 1000 ).toFixed(1);
-            if( v < 0 ) { v= 0; }
-            if( v != me.game.HUD.getItemValue( "timer" ) ) {
-                me.game.HUD.setItemValue( "timer", v );
-            }
+            var v = ( 60000 - ( me.timer.getTime() - this.timerStart ) ) / 1000;
+            v = v.toFixed( 1 );
+
+            if( v < 0 ) { v = 0; }
+            me.game.HUD.setItemValue( "timer", v );
         }
     },
 
@@ -76,55 +74,64 @@ var PlayScreen = me.ScreenObject.extend({
         this.updateTimer();
     },
 
-
-    nextLevel: function( ) {
-        var self = this;
-        var fade = '#000000';
-        var duration = 0.5;
-        me.game.viewport.fadeIn(
-            fade,
-            duration,
-            function() {
-                self.startLevel( "level2" );
-                me.game.viewport.fadeOut( fade, duration );
-            }
-        );
-    },
-
-    /** Update the level display & music. Called on all level changes. */
-    changeLevel: function( )
+    /** 
+     * Actually load the level and sort things out before finally bringing the
+     * screen up.
+     */
+    changeLevel: function( level )
     {
+        var fade = '#000000';
+        var duration = 1000;
+
+        me.levelDirector.loadLevel( level );
+        var layer = me.game.currentLevel.getLayerByName('corrupted background');
+        layer.visible = false;
+        me.game.sort();
+        me.game.viewport.fadeOut( fade, duration, function() {
+            me.game.HUD.addItem( "timer", new CountDown());
+        });
     },
 
     getCurrentMusic: function()
     {
     },
 
+    /**
+     * Start the next level.
+     */
+    nextLevel: function( )
+    {
+        // TODO: victory?
+        this.startLevel( "level" + (1 + this.getLevel())  );
+    },
+
+    /**
+     * Start the given level.
+     */
     startLevel: function( level )
     {
+        var fade = '#000000';
+        var duration = 1000;
         this.doors = [];
         this.orbs = [];
-        me.levelDirector.loadLevel( level );
-        me.game.sort();
-        var layer = me.game.currentLevel.getLayerByName('corrupted background');
-        layer.visible = false;
+        me.game.HUD.removeItem( "timer" );
 
-        this.changeLevel();
+        me.game.viewport.fadeIn(
+            fade,
+            duration,
+            this.changeLevel.bind(this, level)
+        );
     },
 
     // this will be called on state change -> this
     onResetEvent: function()
     {
         me.game.addHUD( 0, 0, me.video.getWidth(), me.video.getHeight() );
-        me.game.HUD.addItem( "timer", new CountDown());
-
         this.startLevel( location.hash.substr(1) || "level1" );
-        me.input.bindKey( me.input.KEY.ENTER, "enter", true );
     },
 
     onDestroyEvent: function()
     {
-        me.input.unbindKey(me.input.KEY.ENTER);
         me.game.disableHUD();
     }
 });
