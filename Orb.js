@@ -1,35 +1,5 @@
-/** Why waste time with multidimentionality? */
-CorruptionMatrixStride = 5,
-
-/** The distance to offset the matrix. This centers the matrix. */
-CorruptionRowOffset = 2,
-
-/** The distance to offset the matrix. This centers the matrix. */
-CorruptionColOffset = 2,
-
-/** Layer that you expose when your corrupt shit. */
-CorruptionLayer = "corrupted background";
-
-NormalLayer = "normal background";
-
-/** TODO: This needs to be a function so that we can map all the various
-* tile types. E.g. if its a floor it is one type of corruption if it is
-* a wall it could be another. */
-CorruptionTileId = 1;
-
-/**
-* The center of the corruption matrix is where the orb is before it is
-* destroyed. The cells around it will be corrupted if they are 1, and left
-* alone if they are 0.
-*/
-CorruptionMatrix = [
-    0, 0, 1, 0, 0 ,
-    0, 1, 1, 1, 0,
-    1, 1, 1, 1, 1,
-    0, 1, 1, 1, 0,
-    0, 0, 1, 0, 0
-];
-
+CorruptionRowOffset = 10;
+CorruptionColOffset = 10;
 
 var Orb = me.ObjectEntity.extend({
 
@@ -48,8 +18,8 @@ var Orb = me.ObjectEntity.extend({
         this.hp = 3;
 
         var level = me.game.currentLevel;
-        this.corrupted = level.getLayerByName( CorruptionLayer );
-        this.normal = level.getLayerByName( NormalLayer );
+        this.corrupted = level.getLayerByName( "corrupted background" );
+        this.normal = level.getLayerByName( "normal background" );
         /*
         for( var i = 40; i < 80; i ++) {
             var s = '';
@@ -80,24 +50,20 @@ var Orb = me.ObjectEntity.extend({
 
     corrupt: function()
     {
-        var tilex = Math.floor(this.pos.x / me.game.currentLevel.tilewidth + .5);
-        var tiley = Math.floor(this.pos.y / me.game.currentLevel.tileheight + .5);
-        for( var y = 0; y < CorruptionMatrixStride; y++ ) {
-            for( var x = 0; x < CorruptionMatrixStride; x++ ) {
-                if( CorruptionMatrix[ y * CorruptionMatrixStride + x ] ) {
-                    var targetx = tilex - CorruptionColOffset + x;
-                    var targety = tiley - CorruptionRowOffset + y;
+        var tw = me.game.currentLevel.tilewidth;
+        var th = me.game.currentLevel.tileheight;
 
-                    if( targetx > 0
-                        && targety > 0
-                        && targety < me.game.currentLevel.height
-                        && targetx < me.game.currentLevel.width
-                    ) {
-                        var currentTile = this.normal.getTileId( targetx, targety );
-                        var newtile = this.corrupted.getTileId( targetx, targety );
-                        this.normal.setTile( targetx, targety, newtile );
-                    }
-                }
+        var tilex = Math.max(0, this.pos.x  - CorruptionColOffset * tw );
+        var tiley = Math.max(0, this.pos.y  - CorruptionRowOffset * th );
+        var endx = Math.min(me.game.currentLevel.realwidth, this.pos.x + CorruptionColOffset * tw );
+        var endy = Math.min(me.game.currentLevel.realheight, this.pos.y + CorruptionRowOffset * th );
+
+        for( var x = tilex; x < endx; x += tw ) {
+            for( var y = tiley; y < endy; y += th ) {
+                // TODO I love mellon's asynmetrical API. Pixels here tiles
+                // there, WHY NOT?!
+                var newtile = this.corrupted.getTileId( x, y );
+                this.normal.setTile( ~~(x / tw), ~~(y / th), newtile);
             }
         }
         me.game.repaint();
