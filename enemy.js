@@ -18,6 +18,8 @@ var Enemy = me.ObjectEntity.extend({
         this.type = me.game.ENEMY_TYPE;
         this.collidable = true;
         this.playerCollidable = true;
+
+        this.hp = 3;
     },
 
     /** Get a vector to the player. */
@@ -34,6 +36,17 @@ var Enemy = me.ObjectEntity.extend({
             );
         }
         return;
+    },
+
+    onCollision: function( res, obj )
+    {
+        if( obj.type == "weakAttack" || obj.type == "strongAttack" )
+        {
+            console.log( "hit by attack res", res.toString() );
+            this.hp -= 1;
+            this.vel.x += res.x * 10.0;
+            this.vel.y += res.y * 10.0;
+        }
     }
 });
 
