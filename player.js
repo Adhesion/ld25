@@ -242,7 +242,6 @@ var PlayerParticle = me.ObjectEntity.extend(
             function() { me.game.remove( this ) } );
         this.type = type;
         this.collide = collide;
-        console.log( "D:FKS" );
     },
 
     update: function()
