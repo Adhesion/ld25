@@ -14,6 +14,7 @@ var Player = me.ObjectEntity.extend(
         settings.image = settings.image || "player";
         settings.spritewidth = settings.spritewidth || 96
         settings.spriteheight = settings.spriteheight || 96
+        settings.collidable = true;
 
         this.parent( x, y, settings );
 
@@ -84,6 +85,7 @@ var Player = me.ObjectEntity.extend(
     // don't collide against player (would break out of loop and miss enemies)
     checkCollision: function( obj )
     {
+        console.log(obj);
         if ( obj.type == "weakAttack" || obj.type == "strongAttack" )
         {
             return null;
@@ -178,6 +180,9 @@ var Player = me.ObjectEntity.extend(
 
     update: function()
     {
+        // check for collision with other objects
+        var colres = me.game.collide(this);
+
         this.checkInput();
 
         this.updateAnimation();

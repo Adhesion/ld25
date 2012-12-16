@@ -8,7 +8,7 @@ CorruptionRowOffset = 2,
 CorruptionColOffset = 2,
 
 /** Layer that you expose when your corrupt shit. */
-CorruptionLayer = "col";
+CorruptionLayer = "corruption";
 
 /** TODO: This needs to be a function so that we can map all the various
 * tile types. E.g. if its a floor it is one type of corruption if it is
@@ -21,54 +21,75 @@ CorruptionTileId = 1;
 * alone if they are 0.
 */
 CorruptionMatrix = [
-	0, 0, 1, 0, 0 ,
-	0, 1, 1, 1, 0,
-	1, 1, 1, 1, 1,
-	0, 1, 1, 1, 0,
-	0, 0, 1, 0, 0
+    0, 0, 1, 0, 0 ,
+    0, 1, 1, 1, 0,
+    1, 1, 1, 1, 1,
+    0, 1, 1, 1, 0,
+    0, 0, 1, 0, 0
 ];
 
 
-var Orb = me.SpriteObject.extend({
-	init: function( x, y, settings )
-	{
-		if( ! settings ) { settings = {} }
-		this.parent(
-			x,
-			y,
-			settings.orb || me.loader.getImage( "maptile" ),
-			settings.width || 48,
-			settings.height || 48
-		);
+var Orb = me.ObjectEntity.extend({
 
-		this.layer = me.game.currentLevel.getLayerByName( CorruptionLayer );
-	},
+    init: function( x, y, settings )
+    {
+        settings = settings || {};
+        settings.image        = settings.image        || me.loader.getImage( "maptile" ),
+        settings.spritewidth  = settings.spritewidth  || 48,
+        settings.spriteheight = settings.spriteheight || 48
+        settings.collidable   = true;
 
-	corrupt: function() {
-		// Round the tile position.
-		var tilex = Math.floor(this.pos.x / me.game.currentLevel.tilewidth + .5);
-		var tiley = Math.floor(this.pos.y / me.game.currentLevel.tileheight + .5);
-		console.log( tilex, tiley);
-		for( var y = 0; y < CorruptionMatrixStride; y++ ) {
-			for( var x = 0; x < CorruptionMatrixStride; x++ ) {
-				if( CorruptionMatrix[ y * CorruptionMatrixStride + x ] ) {
-					this.layer.setTile(
-						tilex - CorruptionColOffset + x,
-						tiley - CorruptionRowOffset + y,
-						CorruptionTileId
-					);
-					me.game.repaint();
-				}
-			}
-		}
-	},
+        this.parent( x, y, settings );
 
-	update: function()
-	{
-		if( me.input.isKeyPressed( "enter" ) ) {
-			this.corrupt();
-		}
-	}
+        this.gravity = 0;
+        this.lastorb = settings.lastorb;
+        this.hp = 3;
+
+        this.layer = me.game.currentLevel.getLayerByName( CorruptionLayer );
+    },
+
+    onCollision: function( obj )
+    {
+        console.log(obj);
+    },
+
+    // fix for multiple collision - if attack sprites are checking collision,
+    // don't collide against player (would break out of loop and miss enemies)
+    checkCollision: function( obj )
+    {
+        if( obj.type == "weakAttack" || obj.type == "strongAttack" )
+        {
+            this.hp -= 1;
+        }
+
+        if( this.hp == 0 ) {
+            this.corrupt();
+        }
+        return this.parent( obj );
+    },
+
+    corrupt: function()
+    {
+        var tilex = Math.floor(this.pos.x / me.game.currentLevel.tilewidth + .5);
+        var tiley = Math.floor(this.pos.y / me.game.currentLevel.tileheight + .5);
+        for( var y = 0; y < CorruptionMatrixStride; y++ ) {
+            for( var x = 0; x < CorruptionMatrixStride; x++ ) {
+                if( CorruptionMatrix[ y * CorruptionMatrixStride + x ] ) {
+                    this.layer.setTile(
+                        tilex - CorruptionColOffset + x,
+                        tiley - CorruptionRowOffset + y,
+                        CorruptionTileId
+                    );
+                    me.game.repaint();
+                }
+            }
+        }
+    },
+
+    update: function()
+    {
+        return false;
+    }
 });
 
 

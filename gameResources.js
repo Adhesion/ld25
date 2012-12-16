@@ -19,6 +19,7 @@ var gameResources = [
     { name: "maptile", type: "image", src: "data/maptile.png" },
 
     { name: "level1", type: "tmx", src: "data/level1.tmx" },
+    { name: "level2", type: "tmx", src: "data/level2.tmx" },
     { name: "boxyrooms", type: "tmx", src: "data/boxyrooms.tmx" },
     { name: "testlevel", type: "tmx", src: "data/testlevel.tmx" },
 
