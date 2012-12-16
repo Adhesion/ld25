@@ -91,7 +91,6 @@ var Player = me.ObjectEntity.extend(
             particleYPos = this.pos.y + 10 + 16;
         }
         var attackParticle = new PlayerParticle( particleXPos, particleYPos, type, 48, 6, [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ], type, true );
-                             new PlayerParticle( this.pos.x, this.pos.y - 64, "headparticle", 96, 6, [ 0, 1, 2, 3, 4, 5, 6 ], "", false );
         me.game.add( attackParticle, 5 );
         me.game.sort();
     },
