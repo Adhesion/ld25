@@ -153,17 +153,22 @@ var Player = me.ObjectEntity.extend(
                                  this.origVelocity.y * 2.5 );
             this.dashTimer = this.dashTimerMax;
 
-            var dashParticle = new PlayerParticle( this.pos.x, this.pos.y,
-                "dash", 96, 6, [], "", false, 96  );
-            dashParticle.addAnimation( "down", [ 0, 1, 2 ] );
-            dashParticle.addAnimation( "left", [ 3, 4, 5 ] );
-            dashParticle.addAnimation( "up", [ 6, 7, 8 ] );
-            dashParticle.addAnimation( "right", [ 9, 10, 11 ] );
-            dashParticle.setCurrentAnimation( this.directionString,
-                function() { me.game.remove( this ) } );
-            me.game.add( dashParticle, 5 );
-            me.game.sort();
+            this.spawnDashParticle();
         }
+    },
+
+    spawnDashParticle: function()
+    {
+        var dashParticle = new PlayerParticle( this.pos.x, this.pos.y,
+            "dash", 96, 6, [], "", false, 96  );
+        dashParticle.addAnimation( "down", [ 0, 1, 2 ] );
+        dashParticle.addAnimation( "left", [ 3, 4, 5 ] );
+        dashParticle.addAnimation( "up", [ 6, 7, 8 ] );
+        dashParticle.addAnimation( "right", [ 9, 10, 11 ] );
+        dashParticle.setCurrentAnimation( this.directionString,
+            function() { me.game.remove( this ) } );
+        me.game.add( dashParticle, this.z - 1 );
+        me.game.sort();
     },
 
     updateAnimation: function()
@@ -207,6 +212,11 @@ var Player = me.ObjectEntity.extend(
             {
                 this.vel.x += this.direction.x * this.accel.x * me.timer.tick;
                 this.vel.y += this.direction.y * this.accel.y * me.timer.tick;
+
+                if ( this.dashTimer % 5 == 0 )
+                {
+                    this.spawnDashParticle();
+                }
             }
             // only need to do this once
             else if ( this.dashTimer == this.dashCooldown )
