@@ -23,6 +23,7 @@ var gameResources = [
 
     { name: "collision_tiles", type: "image", src: "data/collision_tiles.png" },
     { name: "maptile", type: "image", src: "data/maptile.png" },
+    { name: "bg1", type: "image", src: "data/bg1.png" },
 
     { name: "level1", type: "tmx", src: "data/level1.tmx" },
     { name: "level2", type: "tmx", src: "data/level2.tmx" },
