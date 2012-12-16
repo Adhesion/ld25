@@ -149,7 +149,7 @@ var Player = me.ObjectEntity.extend(
             return;
         }
 
-        var attackParticle = new PlayerParticle( particleXPos, particleYPos, attackSprite, spriteWidth, 5, frames, type, true, spriteHeight );
+        var attackParticle = new PlayerParticle( particleXPos, particleYPos, attackSprite, spriteWidth, 3, frames, type, true, spriteHeight );
         attackParticle.flipX( flipX );
         attackParticle.flipY( flipY );
         me.game.add( attackParticle, 5 );

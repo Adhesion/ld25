@@ -19,6 +19,9 @@ var Enemy = me.ObjectEntity.extend({
         this.collidable = true;
         this.playerCollidable = true;
 
+        this.origVelocity = 6;
+        this.setMaxVelocity( this.origVelocity, this.origVelocity );
+
         this.hp = 3;
     },
 
@@ -42,9 +45,24 @@ var Enemy = me.ObjectEntity.extend({
     {
         if( obj.type == "weakAttack" || obj.type == "strongAttack" )
         {
+            res.normalize();
             this.hp -= 1;
-            this.vel.x += res.x * 100.0;
-            this.vel.y += res.y * 100.0;
+            var knockback = 12.0;
+            if ( obj.type == "strongAttack" )
+                knockback = 18.0;
+
+            this.setMaxVelocity( knockback, knockback );
+            this.collidable = false;
+            this.flicker( 60, function()
+                { this.setMaxVelocity( this.origVelocity, this.origVelocity );
+                  this.collidable = true; } );
+
+            this.vel.x += this.toPlayer().x * knockback * -0.5;
+            this.vel.y += this.toPlayer().y * knockback * -0.5;
+        }
+        if ( obj == me.game.player )
+        {
+
         }
     }
 });
@@ -56,7 +74,6 @@ var Hugger = Enemy.extend({
         this.speed = settings.speed || .6;
         this.parent( x, y, settings );
 
-        this.setMaxVelocity( 6, 6 );
         this.setFriction( 0.35, 0.35 );
     },
 
@@ -78,9 +95,10 @@ var Hugger = Enemy.extend({
             }
         }
 
+        // disabling this for now
         if( ! move ) {
-            this.vel.x = 0;
-            this.vel.y = 0;
+            //this.vel.x = 0;
+            //this.vel.y = 0;
         }
 
         this.updateMovement();
@@ -109,7 +127,6 @@ var Pusher = Enemy.extend({
             throw "Pusher needs a direction.";
         }
         this.parent( x, y, settings );
-        this.setMaxVelocity( 6, 6 );
     },
 
     /* When the player gets close, move in a straight line */
