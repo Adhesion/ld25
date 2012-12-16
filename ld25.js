@@ -29,7 +29,6 @@ var jsApp = {
         me.entityPool.add( "hugger", Hugger );
         me.entityPool.add( "pusher", Pusher );
         me.entityPool.add( "orb", Orb );
-        me.entityPool.add( "lastorb", Orb );
 
         me.state.change( me.state.PLAY );
         me.debug.renderHitBox = true;
@@ -88,10 +87,6 @@ var PlayScreen = me.ScreenObject.extend({
         // this only gets called on start?
         me.levelDirector.loadLevel( level );
         me.game.sort();
-
-
-        me.game.add( new Hugger( 900, 1300, {} ), 10 );
-        me.game.add( new Pusher( 500, 1300, { direction: 'down' } ), 10 );
 
         this.changeLevel();
     },

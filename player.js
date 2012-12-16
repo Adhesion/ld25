@@ -10,6 +10,11 @@ var Player = me.ObjectEntity.extend(
 {
     init: function( x, y, settings )
     {
+        settings = settings || {};
+        settings.image = settings.image || "player";
+        settings.spritewidth = settings.spritewidth || 96
+        settings.spriteheight = settings.spriteheight || 96
+
         this.parent( x, y, settings );
 
         this.gravity = 0.0;
