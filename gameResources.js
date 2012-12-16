@@ -11,8 +11,8 @@ var gameResources = [
 
     { name: "player", type: "image", src: "data/avatar.png" },
     { name: "enemy", type: "image", src: "data/tempenemy.png" },
-    { name: "weakattack", type: "image", src: "data/tempattack.png" },
-    { name: "strongattack", type: "image", src: "data/tempattack.png" },
+    { name: "weakAttack", type: "image", src: "data/tempattack.png" },
+    { name: "strongAttack", type: "image", src: "data/tempattack.png" },
     { name: "headparticle", type: "image", src: "data/headParticle.png" },
 
     { name: "collision_tiles", type: "image", src: "data/collision_tiles.png" },

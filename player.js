@@ -78,7 +78,22 @@ var Player = me.ObjectEntity.extend(
 
     attack: function( type )
     {
-
+        var particleXPos = 0;
+        var particleYPos = 0;
+        if ( this.direction.y != 0.0 )
+        {
+            particleXPos = this.pos.x + 24;
+            particleYPos = this.pos.y + 10 + ( this.direction.y * 48 );
+        }
+        else
+        {
+            particleXPos = this.pos.x + 22 + ( this.direction.x * 48 );
+            particleYPos = this.pos.y + 10 + 16;
+        }
+        var attackParticle = new PlayerParticle( particleXPos, particleYPos, type, 48, 6, [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ], type, true );
+                             new PlayerParticle( this.pos.x, this.pos.y - 64, "headparticle", 96, 6, [ 0, 1, 2, 3, 4, 5, 6 ], "", false );
+        me.game.add( attackParticle, 5 );
+        me.game.sort();
     },
 
     checkInput: function()
@@ -199,8 +214,8 @@ var Player = me.ObjectEntity.extend(
             this.headParticleTimer = 30;
             var headP = new PlayerParticle( this.pos.x, this.pos.y - 64,
                 "headparticle", 96, 6, [ 0, 1, 2, 3, 4, 5, 6 ], "", false );
-            me.game.add( headP, 5 );
-            me.game.sort();
+            //me.game.add( headP, 5 );
+            //me.game.sort();
         }
 
         // stupid hack to make diagonal movement obey max velocity
