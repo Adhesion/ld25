@@ -76,6 +76,21 @@ var PlayScreen = me.ScreenObject.extend({
         this.updateTimer();
     },
 
+
+    nextLevel: function( ) {
+        var self = this;
+        var fade = '#000000';
+        var duration = 0.5;
+        me.game.viewport.fadeIn(
+            fade,
+            duration,
+            function() {
+                self.startLevel( "level2" );
+                me.game.viewport.fadeOut( fade, duration );
+            }
+        );
+    },
+
     /** Update the level display & music. Called on all level changes. */
     changeLevel: function( )
     {

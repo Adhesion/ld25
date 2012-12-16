@@ -20,7 +20,14 @@ var Orb = me.ObjectEntity.extend({
         var level = me.game.currentLevel;
         this.corrupted = level.getLayerByName( "corrupted background" );
         this.normal = level.getLayerByName( "normal background" );
+
+        this.fade = settings.fade;
+        this.duration = settings.duration;
+        this.fading = false;
+
+
         me.state.current().orbs.push( this );
+
     },
 
     onCollision: function( res, obj )
@@ -62,7 +69,9 @@ var Orb = me.ObjectEntity.extend({
                 // TODO I love mellon's asynmetrical API. Pixels here tiles
                 // there, WHY NOT?!
                 var newtile = this.corrupted.getTileId( x, y );
-                this.normal.setTile( ~~(x / tw), ~~(y / th), newtile);
+                if( newtile ) {
+                    this.normal.setTile( ~~(x / tw), ~~(y / th), newtile);
+                }
             }
         }
         me.game.repaint();
@@ -83,6 +92,11 @@ var Orb = me.ObjectEntity.extend({
         }
 
         state.orbs.splice( state.orbs.indexOf( this ), 1 );
+
+        // end of level?
+        if( state.orbs.length == 0 ) {
+            me.state.current().nextLevel();
+        }
     },
 
     update: function()
