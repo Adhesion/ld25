@@ -32,6 +32,8 @@ var Player = me.ObjectEntity.extend(
         this.weakAttackType = 0;
         this.strongAttackTimer = 0;
 
+        this.headParticleTimer = 50;
+
         this.updateColRect( 22, 52, 10, 76 );
 
         var directions = [ "down", "left", "up", "right" ];
@@ -198,6 +200,16 @@ var Player = me.ObjectEntity.extend(
         if ( this.strongAttackTimer > 0 )
             this.strongAttackTimer--;
 
+        this.headParticleTimer--;
+        if ( this.headParticleTimer == 0 )
+        {
+            this.headParticleTimer = 30;
+            var headP = new PlayerParticle( this.pos.x, this.pos.y - 64,
+                "headparticle", 96, 6, [ 0, 1, 2, 3, 4, 5, 6 ], "", false );
+            me.game.add( headP, 5 );
+            me.game.sort();
+        }
+
         // stupid hack to make diagonal movement obey max velocity
         // (we can just use x since both components are the same)
         if ( this.vel.x != 0.0 && this.vel.y != 0.0 && this.vel.length() > this.maxVel.x )
@@ -214,9 +226,9 @@ var Player = me.ObjectEntity.extend(
     }
 });
 
-var PlayerAttack = me.ObjectEntity.extend(
+var PlayerParticle = me.ObjectEntity.extend(
 {
-    init: function( x, y, sprite, spritewidth, speed, frames, type )
+    init: function( x, y, sprite, spritewidth, speed, frames, type, collide )
     {
         var settings = new Object();
         settings.image = sprite;
@@ -226,13 +238,17 @@ var PlayerAttack = me.ObjectEntity.extend(
 
         this.animationspeed = speed;
         this.addAnimation( "play", frames );
-        this.setCurrentAnimation( "play", function() { me.game.remove( this ) } );
+        this.setCurrentAnimation( "play",
+            function() { me.game.remove( this ) } );
         this.type = type;
+        this.collide = collide;
+        console.log( "D:FKS" );
     },
 
     update: function()
     {
-        me.game.collide( this );
+        if ( this.collide )
+            me.game.collide( this );
         this.parent();
         return true;
     }
