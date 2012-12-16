@@ -90,6 +90,8 @@ var PlayScreen = me.ScreenObject.extend({
         this.doors = [];
         me.levelDirector.loadLevel( level );
         me.game.sort();
+        var layer = me.game.currentLevel.getLayerByName('corrupted background');
+        layer.visible = false;
 
         this.changeLevel();
     },

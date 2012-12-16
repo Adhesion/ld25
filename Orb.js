@@ -8,7 +8,9 @@ CorruptionRowOffset = 2,
 CorruptionColOffset = 2,
 
 /** Layer that you expose when your corrupt shit. */
-CorruptionLayer = "corruption";
+CorruptionLayer = "corrupted background";
+
+NormalLayer = "normal background";
 
 /** TODO: This needs to be a function so that we can map all the various
 * tile types. E.g. if its a floor it is one type of corruption if it is
@@ -45,7 +47,19 @@ var Orb = me.ObjectEntity.extend({
         this.lastorb = settings.lastorb;
         this.hp = 3;
 
-        this.layer = me.game.currentLevel.getLayerByName( CorruptionLayer );
+        var level = me.game.currentLevel;
+        this.corrupted = level.getLayerByName( CorruptionLayer );
+        this.normal = level.getLayerByName( NormalLayer );
+        /*
+        for( var i = 40; i < 80; i ++) {
+            var s = '';
+            for( var j = 40; j < 80; j ++) {
+                s += this.corrupted.getTileId( i, j ) + ', ';
+            }
+            console.log(s);
+        }
+        */
+        
     },
 
     onCollision: function( res, obj )
@@ -73,16 +87,20 @@ var Orb = me.ObjectEntity.extend({
                 if( CorruptionMatrix[ y * CorruptionMatrixStride + x ] ) {
                     var targetx = tilex - CorruptionColOffset + x;
                     var targety = tiley - CorruptionRowOffset + y;
+
                     if( targetx > 0
                         && targety > 0
                         && targety < me.game.currentLevel.height
-                        && targetx < me.game.currentLevel.width ) {
-                        this.layer.setTile( targetx, targety, CorruptionTileId );
+                        && targetx < me.game.currentLevel.width
+                    ) {
+                        var currentTile = this.normal.getTileId( targetx, targety );
+                        var newtile = this.corrupted.getTileId( targetx, targety );
+                        this.normal.setTile( targetx, targety, newtile );
                     }
-                    me.game.repaint();
                 }
             }
         }
+        me.game.repaint();
         
         var opened = [];
         var state = me.state.current();
