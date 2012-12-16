@@ -196,6 +196,13 @@ var Player = me.ObjectEntity.extend(
         }
     },
 
+    checkCollision: function( obj ) {
+        if( obj.door ) {
+            return this.parent( obj );
+        }
+        return null;
+    },
+
     update: function()
     {
         // check for collision with other objects
@@ -245,6 +252,14 @@ var Player = me.ObjectEntity.extend(
             var ratio = this.maxVel.x / this.vel.length();
             this.vel.x = this.vel.x * ratio;
             this.vel.y  = this.vel.y * ratio;
+        }
+
+        // check if we collide with a door.
+        if( colres && colres.obj.door ) {
+            this.vel.x = colres.x ? 0 : this.vel.x;
+            this.vel.y = colres.y ? 0 : this.vel.y;
+            this.pos.x -= colres.x;
+            this.pos.y -= colres.y;
         }
 
         this.updateMovement();

@@ -50,6 +50,10 @@ var Orb = me.ObjectEntity.extend({
 
     onCollision: function( res, obj )
     {
+        if( this.hp <= 0 ) {
+            return;
+        }
+
         if( obj == me.game.player ) {
             this.hp -= 1;
         }
@@ -57,6 +61,7 @@ var Orb = me.ObjectEntity.extend({
         if( this.hp <= 0 ) {
             this.corrupt();
         }
+
     },
 
     corrupt: function()
@@ -66,14 +71,32 @@ var Orb = me.ObjectEntity.extend({
         for( var y = 0; y < CorruptionMatrixStride; y++ ) {
             for( var x = 0; x < CorruptionMatrixStride; x++ ) {
                 if( CorruptionMatrix[ y * CorruptionMatrixStride + x ] ) {
-                    this.layer.setTile(
-                        tilex - CorruptionColOffset + x,
-                        tiley - CorruptionRowOffset + y,
-                        CorruptionTileId
-                    );
+                    var targetx = tilex - CorruptionColOffset + x;
+                    var targety = tiley - CorruptionRowOffset + y;
+                    if( targetx > 0
+                        && targety > 0
+                        && targety < me.game.currentLevel.height
+                        && targetx < me.game.currentLevel.width ) {
+                        this.layer.setTile( targetx, targety, CorruptionTileId );
+                    }
                     me.game.repaint();
                 }
             }
+        }
+        
+        var opened = [];
+        var state = me.state.current();
+        for( var d = 0; d < state.doors.length; d++ ) {
+            var door = state.doors[d];
+            door.require--;
+            if( door.require == 0 ) {
+                // TODO mark as opened?
+                me.game.remove(door);
+                opened.push(door);
+            }
+        }
+        for( var d = 0; d < opened.length; d++ ) {
+            state.doors.splice( state.doors.indexOf( opened[d] ), 1 );
         }
     },
 

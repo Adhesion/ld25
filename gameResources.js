@@ -16,6 +16,9 @@ var gameResources = [
     { name: "headparticle", type: "image", src: "data/headParticle.png" },
     { name: "dash", type: "image", src: "data/dash.png" },
 
+    { name: 'hdoor', type: 'image', src: 'data/door_horz.png' },
+    { name: 'vdoor', type: 'image', src: 'data/door_vert.png' },
+
     { name: "collision_tiles", type: "image", src: "data/collision_tiles.png" },
     { name: "maptile", type: "image", src: "data/maptile.png" },
 

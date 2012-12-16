@@ -4,10 +4,11 @@
 * Main file for LD25 entry.
 */
 
+
 var jsApp = {
     onload: function()
     {
-        if ( !me.video.init( 'game', 1152, 720 ) )
+        if ( !me.video.init( 'game', 800, 600) )
         {
             alert( "Sorry, it appears your browser does not support HTML5." );
             return;
@@ -28,6 +29,7 @@ var jsApp = {
         me.entityPool.add( "player", Player );
         me.entityPool.add( "hugger", Hugger );
         me.entityPool.add( "pusher", Pusher );
+        me.entityPool.add( "door", Door);
         me.entityPool.add( "orb", Orb );
 
         me.state.change( me.state.PLAY );
@@ -39,6 +41,7 @@ var PlayScreen = me.ScreenObject.extend({
     init: function()
     {
         this.parent( true );
+        // Doors in this current level
         me.input.bindKey( me.input.KEY.ENTER, "enter", true );
     },
 
@@ -84,7 +87,7 @@ var PlayScreen = me.ScreenObject.extend({
 
     startLevel: function( level )
     {
-        // this only gets called on start?
+        this.doors = [];
         me.levelDirector.loadLevel( level );
         me.game.sort();
 
