@@ -80,17 +80,78 @@ var Player = me.ObjectEntity.extend(
     {
         var particleXPos = 0;
         var particleYPos = 0;
-        if ( this.direction.y != 0.0 )
+        var attackSprite = type;
+        var frames = [];
+        var spriteWidth = 0;
+        var spriteHeight = 0;
+        var flipX = false;
+        var flipY = false;
+
+        if ( type == "weakAttack" )
         {
-            particleXPos = this.pos.x + 24;
-            particleYPos = this.pos.y + 10 + ( this.direction.y * 48 );
+            spriteWidth = 96;
+            spriteHeight = 96;
+
+            if ( this.direction.y != 0.0 )
+            {
+                particleXPos = this.pos.x;
+                particleYPos = this.pos.y + ( this.direction.y * 96 );
+
+                if ( this.direction.y > 0.0 )
+                    frames = [ 0, 1, 2, 3 ];
+                else
+                    frames = [ 8, 9, 10, 11 ];
+            }
+            else
+            {
+                particleXPos = this.pos.x + ( this.direction.x * 96 );
+                particleYPos = this.pos.y;
+
+                if ( this.direction.x > 0.0 )
+                    frames = [ 12, 13, 14, 15 ];
+                else
+                    frames = [ 4, 5, 6, 7 ];
+            }
+        }
+        else if ( type == "strongAttack" )
+        {
+            frames = [ 0, 1, 2, 3 ];
+
+            if ( this.direction.y != 0.0 )
+            {
+                particleXPos = this.pos.x - 48;
+                particleYPos = this.pos.y + ( this.direction.y * 96 );
+
+                attackSprite += "_front";
+
+                spriteWidth = 192;
+                spriteHeight = 96;
+
+                if ( this.direction.y < 0.0 )
+                    flipY = true;
+            }
+            else
+            {
+                particleXPos = this.pos.x + ( this.direction.x * 96 );
+                particleYPos = this.pos.y - 48;
+
+                attackSprite += "_side";
+
+                spriteWidth = 96;
+                spriteHeight = 192;
+
+                if ( this.direction.x < 0.0 )
+                    flipX = true;
+            }
         }
         else
         {
-            particleXPos = this.pos.x + 22 + ( this.direction.x * 48 );
-            particleYPos = this.pos.y + 10 + 16;
+            return;
         }
-        var attackParticle = new PlayerParticle( particleXPos, particleYPos, type, 48, 6, [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ], type, true );
+
+        var attackParticle = new PlayerParticle( particleXPos, particleYPos, attackSprite, spriteWidth, 5, frames, type, true, spriteHeight );
+        attackParticle.flipX( flipX );
+        attackParticle.flipY( flipY );
         me.game.add( attackParticle, 5 );
         me.game.sort();
     },
