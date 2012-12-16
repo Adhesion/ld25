@@ -48,24 +48,15 @@ var Orb = me.ObjectEntity.extend({
         this.layer = me.game.currentLevel.getLayerByName( CorruptionLayer );
     },
 
-    onCollision: function( obj )
+    onCollision: function( res, obj )
     {
-        console.log(obj);
-    },
-
-    // fix for multiple collision - if attack sprites are checking collision,
-    // don't collide against player (would break out of loop and miss enemies)
-    checkCollision: function( obj )
-    {
-        if( obj.type == "weakAttack" || obj.type == "strongAttack" )
-        {
+        if( obj == me.game.player ) {
             this.hp -= 1;
         }
 
-        if( this.hp == 0 ) {
+        if( this.hp <= 0 ) {
             this.corrupt();
         }
-        return this.parent( obj );
     },
 
     corrupt: function()

@@ -81,18 +81,6 @@ var Player = me.ObjectEntity.extend(
 
     },
 
-    // fix for multiple collision - if attack sprites are checking collision,
-    // don't collide against player (would break out of loop and miss enemies)
-    checkCollision: function( obj )
-    {
-        console.log(obj);
-        if ( obj.type == "weakAttack" || obj.type == "strongAttack" )
-        {
-            return null;
-        }
-        return this.parent( obj );
-    },
-
     checkInput: function()
     {
         var tempDir = new me.Vector2d( 0.0, 0.0 );
