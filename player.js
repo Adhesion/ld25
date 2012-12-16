@@ -152,6 +152,17 @@ var Player = me.ObjectEntity.extend(
             this.setMaxVelocity( this.origVelocity.x * 2.5,
                                  this.origVelocity.y * 2.5 );
             this.dashTimer = this.dashTimerMax;
+
+            var dashParticle = new PlayerParticle( this.pos.x, this.pos.y,
+                "dash", 96, 6, [], "", false, 96  );
+            dashParticle.addAnimation( "down", [ 0, 1, 2 ] );
+            dashParticle.addAnimation( "left", [ 3, 4, 5 ] );
+            dashParticle.addAnimation( "up", [ 6, 7, 8 ] );
+            dashParticle.addAnimation( "right", [ 9, 10, 11 ] );
+            dashParticle.setCurrentAnimation( this.directionString,
+                function() { me.game.remove( this ) } );
+            me.game.add( dashParticle, 5 );
+            me.game.sort();
         }
     },
 
@@ -235,11 +246,12 @@ var Player = me.ObjectEntity.extend(
 
 var PlayerParticle = me.ObjectEntity.extend(
 {
-    init: function( x, y, sprite, spritewidth, speed, frames, type, collide )
+    init: function( x, y, sprite, spritewidth, speed, frames, type, collide, spriteheight )
     {
         var settings = new Object();
         settings.image = sprite;
         settings.spritewidth = spritewidth;
+        settings.spriteheight = spriteheight;
 
         this.parent( x, y, settings );
 
