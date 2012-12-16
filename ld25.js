@@ -88,6 +88,7 @@ var PlayScreen = me.ScreenObject.extend({
     startLevel: function( level )
     {
         this.doors = [];
+        this.orbs = [];
         me.levelDirector.loadLevel( level );
         me.game.sort();
         var layer = me.game.currentLevel.getLayerByName('corrupted background');

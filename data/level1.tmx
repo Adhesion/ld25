@@ -39,16 +39,16 @@
  <objectgroup name="orbs" width="122" height="79">
   <object name="orb" x="2976" y="2832" width="96" height="96"/>
   <object name="orb" x="48" y="3312" width="96" height="96"/>
-  <object name="orb" x="432" y="1920" width="96" height="96"/>
-  <object name="orb" x="960" y="864" width="96" height="96"/>
-  <object name="orb" x="2496" y="720" width="96" height="96"/>
-  <object name="orb" x="4272" y="384" width="96" height="96"/>
-  <object name="orb" x="4704" y="1296" width="96" height="96"/>
-  <object name="orb" x="2976" y="1920" width="96" height="96">
+  <object name="orb" x="434" y="1914" width="96" height="96">
    <properties>
     <property name="last" value="true"/>
    </properties>
   </object>
+  <object name="orb" x="960" y="864" width="96" height="96"/>
+  <object name="orb" x="2496" y="720" width="96" height="96"/>
+  <object name="orb" x="4272" y="384" width="96" height="96"/>
+  <object name="orb" x="4702" y="1294" width="96" height="96"/>
+  <object name="orb" x="2962" y="1902" width="96" height="96"/>
   <object name="player" x="2999" y="3506" width="96" height="96"/>
   <object x="2995" y="3501" height="2"/>
  </objectgroup>

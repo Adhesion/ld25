@@ -14,22 +14,13 @@ var Orb = me.ObjectEntity.extend({
         this.parent( x, y, settings );
 
         this.gravity = 0;
-        this.lastorb = settings.lastorb;
+        this.last = settings.last;
         this.hp = 3;
 
         var level = me.game.currentLevel;
         this.corrupted = level.getLayerByName( "corrupted background" );
         this.normal = level.getLayerByName( "normal background" );
-        /*
-        for( var i = 40; i < 80; i ++) {
-            var s = '';
-            for( var j = 40; j < 80; j ++) {
-                s += this.corrupted.getTileId( i, j ) + ', ';
-            }
-            console.log(s);
-        }
-        */
-        
+        me.state.current().orbs.push( this );
     },
 
     onCollision: function( res, obj )
@@ -39,6 +30,14 @@ var Orb = me.ObjectEntity.extend({
         }
 
         if( obj == me.game.player ) {
+            if( this.last ) {
+                var orbs = me.state.current().orbs;
+                for( var i = 0; i < orbs.length; i ++ ){
+                    if( ! orbs[i].last ) {
+                        return;
+                    }
+                }
+            }
             this.hp -= 1;
         }
 
@@ -67,7 +66,7 @@ var Orb = me.ObjectEntity.extend({
             }
         }
         me.game.repaint();
-        
+
         var opened = [];
         var state = me.state.current();
         for( var d = 0; d < state.doors.length; d++ ) {
@@ -82,6 +81,8 @@ var Orb = me.ObjectEntity.extend({
         for( var d = 0; d < opened.length; d++ ) {
             state.doors.splice( state.doors.indexOf( opened[d] ), 1 );
         }
+
+        state.orbs.splice( state.orbs.indexOf( this ), 1 );
     },
 
     update: function()
