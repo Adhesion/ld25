@@ -19,7 +19,7 @@ var Orb = me.ObjectEntity.extend({
 
         var level = me.game.currentLevel;
         this.corrupted = level.getLayerByName( "corrupted background" );
-        this.normal = level.getLayerByName( "background" );
+        this.normal = level.getLayerByName( "corrupted foreground" );
 
         this.fade = settings.fade;
         this.duration = settings.duration;
@@ -36,6 +36,7 @@ var Orb = me.ObjectEntity.extend({
         }
 
         if( obj == me.game.player ) {
+            console.log( "hello" );
             if( this.last ) {
                 var orbs = me.state.current().orbs;
                 for( var i = 0; i < orbs.length; i ++ ){
