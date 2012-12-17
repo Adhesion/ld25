@@ -67,9 +67,9 @@ var Enemy = me.ObjectEntity.extend({
     knockback: function( obj )
     {
         this.hp -= 1;
-        var knockback = 12.0;
+        var knockback = 3.0;
         if ( obj.type == "strongAttack" )
-            knockback = 18.0;
+            knockback = 12.0;
 
         this.setMaxVelocity( knockback, knockback );
         this.collidable = false;
@@ -184,6 +184,8 @@ var Pusher = Enemy.extend({
         settings.image = "pusher";
         settings.spritewidth = 96;
         settings.spriteheight = 96;
+
+        this.animationspeed = 3;
 
         this.pushTimer = 0;
 

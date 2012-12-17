@@ -25,7 +25,6 @@ var Orb = me.ObjectEntity.extend({
         this.duration = settings.duration;
         this.fading = false;
 
-
         me.state.current().orbs.push( this );
 
     },
