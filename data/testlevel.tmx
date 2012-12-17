@@ -45,12 +45,13 @@
    </properties>
   </object>
   <object name="shooter" x="1480" y="1511" width="84" height="84"/>
-  <object name="hugger" x="407" y="1443" width="59" height="55"/>
-  <object name="pusher" x="522" y="1517" width="59" height="55">
+  <object name="hugger" x="901" y="1200" width="59" height="55"/>
+  <object name="pusher" x="1016" y="1274" width="59" height="55">
    <properties>
     <property name="direction" value="right"/>
    </properties>
   </object>
   <object name="doctor" x="1826" y="1185" width="213" height="155"/>
+  <object name="boss" x="324" y="1304" width="365" height="380"/>
  </objectgroup>
 </map>

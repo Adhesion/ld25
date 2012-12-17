@@ -31,6 +31,7 @@ var jsApp = {
         me.entityPool.add( "pusher", Pusher );
         me.entityPool.add( "shooter", Shooter );
         me.entityPool.add( "doctor", Doctor );
+        me.entityPool.add( "boss", Boss );
         me.entityPool.add( "door", Door);
         me.entityPool.add( "orb", Orb );
 
@@ -61,7 +62,7 @@ var PlayScreen = me.ScreenObject.extend({
         if( me.game.HUD.getItemValue( "timer" ) <= 0 ) {
             this.timerStart = me.timer.getTime();
             me.game.HUD.setItemValue( "timer" , 60.0 );
-            console.log( "timer 0" );
+            //console.log( "timer 0" );
         }
         else {
             var v = ( 60000 - ( me.timer.getTime() - this.timerStart ) ) / 1000;

@@ -105,16 +105,16 @@ var Enemy = me.ObjectEntity.extend({
         }
     },
 
-    fireBullet: function()
+    fireBullet: function( image, velMult )
     {
         // note collide is false as the player checks its own collision, bullet will be recipient & get oncollision call
         var bPosX = this.pos.x + ( this.width / 2 ) + 24;
         var bPosY = this.pos.y + ( this.height / 2 ) + 24;
-        var bullet = new EnemyBullet( bPosX, bPosY, "shooterBullet", 48, 5, [ 0 ], "shooterBullet", false, 48 );
+        var bullet = new EnemyBullet( bPosX, bPosY, image || "shooterBullet", 48, 5, [ 0 ], "shooterBullet", false, 48 );
         var dir = this.toPlayer();
         dir.normalize();
-        bullet.vel.x = dir.x * 5.0;
-        bullet.vel.y = dir.y * 5.0;
+        bullet.vel.x = dir.x * ( velMult || 5.0 );
+        bullet.vel.y = dir.y * ( velMult || 5.0 );
         me.game.add( bullet, this.z + 1 );
         me.game.sort();
         me.audio.play( "shoot" );
@@ -325,7 +325,6 @@ var Shooter = Enemy.extend(
         settings.spritewidth = 96;
         settings.spriteheight = 96;
         this.parent( x, y, settings );
-        console.log( "shooter init" );
 
         this.hp = 7;
 
@@ -516,17 +515,79 @@ var Boss = Enemy.extend(
 {
     init: function( x, y, settings )
     {
+        settings.image = "boss";
+        settings.spritewidth = 192;
+        settings.spriteheight = 240;
+        this.parent( x, y, settings );
+
+        this.hp = 40;
+
+        this.gravity = 0;
+
         this.deathSound = "bossdeath";
+
+        this.shootTimer = 90;
+        this.hitTimer = 0;
+
+        this.addAnimation( "idle", [ 0, 0, 0, 0, 0, 0, 1 ] );
+        this.addAnimation( "shoot", [ 2 ] );
+        this.addAnimation( "hit", [ 3 ] );
     },
 
     onCollision: function( res, obj )
     {
+        if ( obj.type == "weakAttack" || obj.type == "strongAttack" )
+        {
+            if( obj.type == "weakAttack" )
+            {
+                this.knockback( 1, 0.0, 0 );
+            }
+            else if ( obj.type == "strongAttack" )
+            {
+                this.knockback( 2, 0.0, 0 );
+            }
+            this.hitTimer = 10;
+            this.collidable = false;
+        }
+    },
 
+    knockback: function( damage, amt, length )
+    {
+        this.parent( damage, amt, length );
+        if ( this.hp <= 0 )
+        {
+            console.log( "GAMEOVER" );
+            me.state.change( me.state.GAMEOVER );
+        }
     },
 
     update: function()
     {
+        if ( this.shootTimer == 0 )
+        {
+            this.fireBullet( "bossBullet", 8.0 );
+            this.shootTimer = 90;
+        }
+        else
+            this.shootTimer--;
 
+        if ( this.shootTimer > 40 )
+        {
+            this.setCurrentAnimation( "shoot" );
+        }
+        else if ( this.hitTimer > 0 )
+        {
+            this.setCurrentAnimation( "hit" );
+            this.hitTimer--;
+            if ( this.hitTimer == 0 )
+                this.collidable = true;
+        }
+        else
+        {
+            this.setCurrentAnimation( "idle" );
+        }
+
+        return this.parent( this );
     }
 });
 
@@ -543,7 +604,6 @@ var EnemyBullet = PlayerParticle.extend(
 
     onCollision: function( res, obj )
     {
-        console.log( "enemy bullet collision" );
         if ( obj == me.game.player )
         {
             me.game.player.hit();

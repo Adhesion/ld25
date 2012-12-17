@@ -162,7 +162,7 @@ var Player = me.ObjectEntity.extend(
     hit: function()
     {
         this.stunned = true;
-        this.flicker( 90, function() { this.stunned = false; } );
+        this.flicker( 75, function() { this.stunned = false; } );
     },
 
     addAttached: function( enemy )

@@ -12,6 +12,7 @@ var gameResources = [
     { name: "pusher", type: "image", src: "data/pusher.png" },
     { name: "shooter", type: "image", src: "data/shooter.png" },
     { name: "doctor", type: "image", src: "data/doc.png" },
+    { name: "boss", type: "image", src: "data/boss.png" },
 
     { name: "player", type: "image", src: "data/avatar.png" },
     { name: "enemy", type: "image", src: "data/tempenemy.png" },
@@ -22,6 +23,7 @@ var gameResources = [
     { name: "headparticle", type: "image", src: "data/headParticle.png" },
     { name: "dash", type: "image", src: "data/dash.png" },
     { name: "shooterbullet", type: "image", src: "data/shooterbullet.png" },
+    { name: "bossbullet", type: "image", src: "data/bossbullet.png" },
     { name: "die", type: "image", src: "data/die.png" },
 
     { name: "orb", type: "image", src: "data/orb.png" },
