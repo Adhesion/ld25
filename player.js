@@ -332,10 +332,10 @@ var Player = me.ObjectEntity.extend(
         if ( this.headParticleTimer == 0 )
         {
             this.headParticleTimer = 30;
-            var headP = new PlayerParticle( this.pos.x, this.pos.y - 64,
+            var headP = new PlayerParticle( this.pos.x, this.pos.y - 72,
                 "headparticle", 96, 6, [ 0, 1, 2, 3, 4, 5, 6 ], "", false );
-            //me.game.add( headP, 5 );
-            //me.game.sort();
+            me.game.add( headP, this.z - 1 );
+            me.game.sort();
         }
 
         // stupid hack to make diagonal movement obey max velocity

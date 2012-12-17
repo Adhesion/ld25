@@ -381,8 +381,10 @@ var EnemyBullet = PlayerParticle.extend(
     {
         console.log( "enemy bullet collision" );
         if ( obj == me.game.player )
+        {
             me.game.player.hit();
-        me.game.remove( this );
+            me.game.remove( this );
+        }
     },
 
     update: function()

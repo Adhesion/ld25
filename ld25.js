@@ -34,7 +34,7 @@ var jsApp = {
         me.entityPool.add( "orb", Orb );
 
         me.state.change( me.state.PLAY );
-        me.debug.renderHitBox = true;
+        me.debug.renderHitBox = false;
     }
 };
 
