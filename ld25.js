@@ -174,6 +174,8 @@ var GameOverScreen = me.ScreenObject.extend(
 var PlayScreen = me.ScreenObject.extend({
     init: function()
     {
+		this.startTime = 60.0; 
+		
         this.parent( true, true );
     },
 
