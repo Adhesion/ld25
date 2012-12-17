@@ -190,32 +190,31 @@ var PlayScreen = me.ScreenObject.extend({
         var results = re.exec( input );
         return parseInt(results[1]);
     },
-	
-	resetTime: function( ){
+    
+    resetTime: function( ){
         me.game.HUD.setItemValue( "timer" , 60.0 );
-		this.timerStart = me.timer.getTime(); 
-	},
-	
-	addTime: function(t){
-        //me.game.HUD.setItemValue( "timer" , 60.0 );
-		this.timerStart += t * 1000; 
-		if(me.game.doctor.enabled) me.game.doctor.disable();
-	},
-
-    updateTimer: function() {
-     
-		var v = ( this.startTime * 1000 - ( me.timer.getTime() - this.timerStart ) ) / 1000;
-		v = v.toFixed( 1 );
-
-		if( v < 0 ) { 
-			v = 0; 
-			if(!me.game.doctor.enabled) me.game.doctor.enable();
-			//gameover or spawn doc here? 
-		}
-		
-		me.game.HUD.setItemValue( "timer", v );
+        this.timerStart = me.timer.getTime(); 
     },
-
+    
+    addTime: function(t){
+        //me.game.HUD.setItemValue( "timer" , 60.0 );
+        this.timerStart += t * 1000; 
+        if(me.game.doctor.enabled) me.game.doctor.disable();
+    },
+    
+    updateTimer: function() {
+        
+        var v = ( this.startTime * 1000 - ( me.timer.getTime() - this.timerStart ) ) / 1000;
+        v = v.toFixed( 1 );
+        
+        if( v < 0 ) { 
+            v = 0; 
+            if(!me.game.doctor.enabled) me.game.doctor.enable();
+        }
+        
+        me.game.HUD.setItemValue( "timer", v );
+    },
+    
     update: function()
     {
         this.updateTimer();
@@ -237,8 +236,8 @@ var PlayScreen = me.ScreenObject.extend({
         me.game.viewport.fadeOut( fade, duration, function() {
             me.game.HUD.addItem( "timer", new CountDown());
         });
-		
-		this.resetTime();
+        
+        this.resetTime();
     },
 
     getCurrentMusic: function()
@@ -253,10 +252,10 @@ var PlayScreen = me.ScreenObject.extend({
         // TODO hack 3rd level is last, boss has gameover condition
         if ( this.getLevel() < 3 )
             this.startLevel( "level" + (1 + this.getLevel())  );
-		else{
-			me.state.change( me.state.GAMEOVER );
-		}
-    },
+        else{
+            me.state.change( me.state.GAMEOVER );
+        }
+},
 
     /**
      * Start the given level.
