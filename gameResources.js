@@ -20,13 +20,14 @@ var gameResources = [
     { name: "tempAttack", type: "image", src: "data/tempattack.png" },
     { name: "headparticle", type: "image", src: "data/headParticle.png" },
     { name: "dash", type: "image", src: "data/dash.png" },
-    { name: "shooterBullet", type: "image", src: "data/shooterBullet.png" },
 
     { name: 'hdoor', type: 'image', src: 'data/door_horz.png' },
     { name: 'vdoor', type: 'image', src: 'data/door_vert.png' },
 
     { name: "collision_tiles", type: "image", src: "data/collision_tiles.png" },
     { name: "maptile", type: "image", src: "data/maptile.png" },
+    { name: "maptile2", type: "image", src: "data/maptile2.png" },
+    { name: "corruption", type: "image", src: "data/corruption.png" },
     { name: "bg1", type: "image", src: "data/bg1.png" },
 
     { name: "level1", type: "tmx", src: "data/level1.tmx" },
