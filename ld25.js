@@ -188,20 +188,30 @@ var PlayScreen = me.ScreenObject.extend({
         var results = re.exec( input );
         return parseInt(results[1]);
     },
+	
+	resetTime: function( ){
+        me.game.HUD.setItemValue( "timer" , 60.0 );
+		this.timerStart = me.timer.getTime(); 
+	},
+	
+	addTime: function(t){
+        //me.game.HUD.setItemValue( "timer" , 60.0 );
+		this.timerStart += t * 1000; 
+		if(me.game.doctor.enabled) me.game.doctor.disable();
+	},
 
     updateTimer: function() {
-        if( me.game.HUD.getItemValue( "timer" ) <= 0 ) {
-            this.timerStart = me.timer.getTime();
-            me.game.HUD.setItemValue( "timer" , 60.0 );
-            //console.log( "timer 0" );
-        }
-        else {
-            var v = ( 60000 - ( me.timer.getTime() - this.timerStart ) ) / 1000;
-            v = v.toFixed( 1 );
+     
+		var v = ( this.startTime * 1000 - ( me.timer.getTime() - this.timerStart ) ) / 1000;
+		v = v.toFixed( 1 );
 
-            if( v < 0 ) { v = 0; }
-            me.game.HUD.setItemValue( "timer", v );
-        }
+		if( v < 0 ) { 
+			v = 0; 
+			if(!me.game.doctor.enabled) me.game.doctor.enable();
+			//gameover or spawn doc here? 
+		}
+		
+		me.game.HUD.setItemValue( "timer", v );
     },
 
     update: function()
@@ -225,6 +235,8 @@ var PlayScreen = me.ScreenObject.extend({
         me.game.viewport.fadeOut( fade, duration, function() {
             me.game.HUD.addItem( "timer", new CountDown());
         });
+		
+		this.resetTime();
     },
 
     getCurrentMusic: function()

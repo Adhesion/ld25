@@ -108,8 +108,8 @@ var Enemy = me.ObjectEntity.extend({
     fireBullet: function( image, velMult )
     {
         // note collide is false as the player checks its own collision, bullet will be recipient & get oncollision call
-        var bPosX = this.pos.x + ( this.width / 2 ) + 24;
-        var bPosY = this.pos.y + ( this.height / 2 ) + 24;
+        var bPosX = this.pos.x + ( this.width / 2 ) - 24;
+        var bPosY = this.pos.y + ( this.height / 2 ) - 24;
         var bullet = new EnemyBullet( bPosX, bPosY, image || "shooterBullet", 48, 5, [ 0 ], "shooterBullet", false, 48 );
         var dir = this.toPlayer();
         dir.normalize();
@@ -397,6 +397,9 @@ var Doctor = Enemy.extend(
 {
     init: function( x, y, settings )
     {
+		this.startX = x; 
+		this.startY = y;
+		
         this.range = settings.range || 20000;
         this.speed = settings.speed || 0.5;
         settings.spritewidth = settings.spritewidth || 144;
@@ -427,7 +430,8 @@ var Doctor = Enemy.extend(
         this.visible = false;
         this.collidable = false;
         this.enabled = false;
-        this.enable();
+        //this.enable();
+		
     },
 
     enable: function()
@@ -436,7 +440,21 @@ var Doctor = Enemy.extend(
         this.enabled = true;
         this.flicker( 500, function() { this.collidable = true; } );
     },
-
+	
+	disable: function()
+    {
+		this.pos.x = this.startX;
+		this.pos.y = this.startY;
+        this.visible = false;
+        this.enabled = false;
+		
+		var dPosX = this.pos.x + ( this.width / 2 ) - 48;
+		var dPosY = this.pos.y + ( this.height / 2 ) - 48;
+		var deathPart = new PlayerParticle( dPosX, dPosY, "die", 96, 5, [ 0, 1, 2, 3, 4, 5 ], "", false );
+		me.game.add( deathPart, this.z + 1 );
+		me.game.sort();
+    },
+	
     onCollision: function( res, obj )
     {
         if ( obj == me.game.player )

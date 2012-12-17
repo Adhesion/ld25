@@ -25,7 +25,7 @@ var Orb = me.ObjectEntity.extend({
 
         this.gravity = 0;
         this.hp = 7;
-		this.lastHit = null; 
+		this.timeBonus = 15.0;
 		
         var level = me.game.currentLevel;
         this.corrupted = level.getLayerByName( "corrupted background" );
@@ -43,11 +43,9 @@ var Orb = me.ObjectEntity.extend({
         if( this.hp <= 0 ) {
             return;
         }
-		if(this.hitDelay > 0) this.hitDelay--;
 		
-        if( obj != this.lastHit && obj.type == "weakAttack" || obj.type == "strongAttack" ) {
+        if( obj.type == "weakAttack" || obj.type == "strongAttack" ) {
             
-			this.lastHit = obj;
 			if( this.last ) {
 				var orbs = me.state.current().orbs;
 				for( var i = 0; i < orbs.length; i ++ ){
@@ -64,6 +62,7 @@ var Orb = me.ObjectEntity.extend({
         }
 
         if( this.hp <= 0 ) {
+			me.game.HUD.setItemValue( "timer" , 60.0 );
 			me.game.viewport.shake(20, 20, me.game.viewport.AXIS.BOTH);
             this.corrupt();
         }
@@ -109,6 +108,7 @@ var Orb = me.ObjectEntity.extend({
         }
 
         state.orbs.splice( state.orbs.indexOf( this ), 1 );
+        state.addTime(this.timeBonus); 
 
         me.audio.play( "orbdeath" );
 

@@ -188,6 +188,7 @@
   <object name="hugger" x="2960" y="368" width="48" height="48"/>
   <object name="hugger" x="3042" y="368" width="48" height="48"/>
   <object name="shooter" x="4896" y="1300" width="84" height="84"/>
+  <object name="doctor" x="1160" y="1895" width="213" height="155"/>
  </objectgroup>
  <objectgroup name="doors" width="122" height="79">
   <object name="door" x="1672" y="1872" width="96" height="192">
