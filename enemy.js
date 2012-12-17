@@ -168,7 +168,7 @@ var Hugger = Enemy.extend({
 
         this.updateMovement();
 
-        // need to check collidable to finish flicker
+        // need to check collidable to finish flicker?
         if ( move || !this.collidable )
             this.parent( this );
         return move;
@@ -221,7 +221,7 @@ var Shooter = Enemy.extend(
 
 });
 
-var Doctor = Enemy.extend(
+var Doctor = Hugger.extend(
 {
 
 });
