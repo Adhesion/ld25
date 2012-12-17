@@ -30,11 +30,12 @@ var jsApp = {
         me.entityPool.add( "hugger", Hugger );
         me.entityPool.add( "pusher", Pusher );
         me.entityPool.add( "shooter", Shooter );
+        me.entityPool.add( "doctor", Doctor );
         me.entityPool.add( "door", Door);
         me.entityPool.add( "orb", Orb );
 
         me.state.change( me.state.PLAY );
-        me.debug.renderHitBox = false;
+        me.debug.renderHitBox = true;
     }
 };
 
@@ -60,6 +61,7 @@ var PlayScreen = me.ScreenObject.extend({
         if( me.game.HUD.getItemValue( "timer" ) <= 0 ) {
             this.timerStart = me.timer.getTime();
             me.game.HUD.setItemValue( "timer" , 60.0 );
+            console.log( "timer 0" );
         }
         else {
             var v = ( 60000 - ( me.timer.getTime() - this.timerStart ) ) / 1000;
@@ -102,8 +104,9 @@ var PlayScreen = me.ScreenObject.extend({
      */
     nextLevel: function( )
     {
-        // TODO: victory?
-        this.startLevel( "level" + (1 + this.getLevel())  );
+        // TODO hack 3rd level is last, boss has gameover condition
+        if ( this.getLevel() < 3 )
+            this.startLevel( "level" + (1 + this.getLevel())  );
     },
 
     /**

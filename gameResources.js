@@ -11,6 +11,7 @@ var gameResources = [
     { name: "hugger", type: "image", src: "data/hugger.png" },
     { name: "pusher", type: "image", src: "data/pusher.png" },
     { name: "shooter", type: "image", src: "data/shooter.png" },
+    { name: "doctor", type: "image", src: "data/doc.png" },
 
     { name: "player", type: "image", src: "data/avatar.png" },
     { name: "enemy", type: "image", src: "data/tempenemy.png" },

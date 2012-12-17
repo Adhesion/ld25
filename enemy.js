@@ -57,23 +57,28 @@ var Enemy = me.ObjectEntity.extend({
 
     onCollision: function( res, obj )
     {
-        if( obj.type == "weakAttack" || obj.type == "strongAttack" ||
-            ( obj == me.game.player && me.game.player.isDashing() ) )
+        if( obj.type == "weakAttack" )
         {
-            this.knockback( obj );
+            this.knockback( 1, 3.0, 40 );
+        }
+        else if ( obj.type == "strongAttack" )
+        {
+            this.knockback( 2, 12.0, 60 );
+        }
+        else if ( obj == me.game.player && me.game.player.isDashing() )
+        {
+            this.knockback( 0, 6.0, 0 );
         }
     },
 
-    knockback: function( obj )
+    knockback: function( damage, amt, length )
     {
-        this.hp -= 1;
-        var knockback = 3.0;
-        if ( obj.type == "strongAttack" )
-            knockback = 12.0;
+        this.hp -= damage;
+        var knockback = amt;
 
         this.setMaxVelocity( knockback, knockback );
         this.collidable = false;
-        this.flicker( 60, function()
+        this.flicker( length, function()
         { this.setMaxVelocity( this.origVelocity, this.origVelocity );
             this.collidable = true; } );
 
@@ -101,7 +106,7 @@ var Hugger = Enemy.extend({
     {
         this.range = settings.range || 200;
         this.speed = settings.speed || .6;
-        settings.image = "hugger";
+        settings.image = settings.image || "hugger";
         this.parent( x, y, settings );
 
         this.setFriction( 0.35, 0.35 );
@@ -356,9 +361,106 @@ var Shooter = Enemy.extend(
     }
 });
 
-var Doctor = Hugger.extend(
+var Doctor = Enemy.extend(
 {
+    init: function( x, y, settings )
+    {
+        this.range = settings.range || 20000;
+        this.speed = settings.speed || 0.5;
+        settings.spritewidth = settings.spritewidth || 144;
+        settings.spriteheight = settings.spriteheight || 144;
+        settings.image = settings.image || "doctor";
+        this.parent( x, y, settings );
 
+        this.setVelocity( 2.0, 2.0 );
+
+        this.updateColRect( 36, 72, 10, 124 );
+
+        this.soundTimer = 0;
+
+        this.setFriction( 0.35, 0.35 );
+
+        var directions = [ "down", "left", "up", "right" ];
+        for ( var i = 0; i < directions.length; i++ )
+        {
+            var index = i * 3;
+            this.addAnimation( directions[ i ] + "idle", [ index ] );
+            this.addAnimation( directions[ i ] + "run",
+                [ index, index + 1, index, index + 2 ] );
+        }
+
+        this.setCurrentAnimation( "downidle" );
+
+        me.game.doctor = this;
+        this.visible = false;
+        this.collidable = false;
+        this.enable();
+    },
+
+    enable: function()
+    {
+        this.visible = true;
+        this.flicker( 500, function() { this.collidable = true; } );
+    },
+
+    onCollision: function( res, obj )
+    {
+        if ( obj == me.game.player )
+        {
+            this.collidable = false;
+            console.log( "player doc hit" );
+            me.game.player.stunned = true;
+            var duration = 1000;
+            me.game.player.flicker( duration );
+            var fade = '#000000';
+            me.game.viewport.fadeOut( fade, duration, function() {
+                me.state.current().startLevel( me.levelDirector.getCurrentLevelId() );
+            });
+        }
+        else if( obj.type == "weakAttack" )
+        {
+            this.knockback( 0, 1.0, 10 );
+        }
+        else if ( obj.type == "strongAttack" )
+        {
+            this.knockback( 0, 3.0, 15 );
+        }
+    },
+
+    update: function()
+    {
+        this.updateDirectionString();
+
+        if ( this.collidable )
+        {
+            var direction = this.toPlayer();
+            var move = false;
+            if( direction ) {
+                var dist = direction.length();
+                if( dist < this.range && dist > 0) {
+                    this.setCurrentAnimation( this.directionString + "run" );
+                    direction.normalize();
+                    this.vel.x += direction.x * this.speed;
+                    this.vel.y += direction.y * this.speed;
+                    this.direction = direction;
+                    move = true;
+                }
+            }
+
+            // disabling this for now
+            if( ! move ) {
+                //this.vel.x = 0;
+                //this.vel.y = 0;
+            }
+        }
+
+        this.updateMovement();
+
+        // need to check collidable to finish flicker?
+        if ( move || !this.collidable )
+            this.parent( this );
+        return move;
+    }
 });
 
 var Boss = Enemy.extend(
