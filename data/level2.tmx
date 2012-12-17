@@ -57,14 +57,14 @@
   <object x="3330" y="2680" width="2"/>
   <object name="hugger" x="2651" y="2670" width="48" height="48"/>
   <object name="hugger" x="3321" y="2690" width="48" height="48"/>
-  <object name="pusher" x="3136" y="2285" width="48" height="48">
+  <object name="pusher" x="3379" y="2120" width="48" height="48">
    <properties>
     <property name="direction" value="left"/>
     <property name="range" value="300"/>
     <property name="speed" value="5.8"/>
    </properties>
   </object>
-  <object name="pusher" x="2861" y="2276" width="48" height="48">
+  <object name="pusher" x="2722" y="2238" width="48" height="48">
    <properties>
     <property name="direction" value="right"/>
     <property name="range" value="300"/>

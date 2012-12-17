@@ -19,7 +19,7 @@ var Orb = me.ObjectEntity.extend({
 
         var level = me.game.currentLevel;
         this.corrupted = level.getLayerByName( "corrupted background" );
-        this.normal = level.getLayerByName( "corrupted foreground" );
+        this.normal = level.getLayerByName( "background" );
 
         this.fade = settings.fade;
         this.duration = settings.duration;

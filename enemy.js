@@ -97,6 +97,8 @@ var Hugger = Enemy.extend({
         this.posDiffX = 0;
         this.posDiffY = 0;
 
+        console.log( "hugger init" );
+
         var directions = [ "down", "left", "up", "right" ];
         for ( var i = 0; i < directions.length; i++ )
         {
@@ -179,6 +181,16 @@ var Pusher = Enemy.extend({
     init: function( x, y, settings ) {
         this.range = settings.range || 200;
         this.speed = settings.speed || .6;
+        settings.image = "pusher";
+        settings.spritewidth = 96;
+        settings.spriteheight = 96;
+
+        this.pushTimer = 0;
+
+        this.parent( x, y, settings );
+
+        this.updateColRect( 32, 32, 10, 86 );
+
         if( settings.direction == 'left' ) {
             this.direction = new me.Vector2d( -1, 0 );
         }
@@ -194,12 +206,36 @@ var Pusher = Enemy.extend({
         else {
             throw "Pusher needs a direction.";
         }
-        this.parent( x, y, settings );
+
+        var directions = [ "down", "left", "up", "right" ];
+        for ( var i = 0; i < directions.length; i++ )
+        {
+            var index = i * 4;
+            this.addAnimation( directions[ i ] + "idle", [ index ] );
+            this.addAnimation( directions[ i ] + "run",
+                [ index, index + 1, index, index + 2 ] );
+            this.addAnimation( directions[ i ] + "push", [ index + 3 ] );
+        }
+    },
+
+    onCollision: function( res, obj )
+    {
+        this.parent( res, obj );
+        if ( obj == me.game.player && !me.game.player.isDashing() )
+        {
+            me.game.player.vel.x += this.direction.x * 10.0;
+            me.game.player.vel.y += this.direction.y * 10.0;
+            this.pushTimer = 10;
+        }
     },
 
     /* When the player gets close, move in a straight line */
     update: function() {
+        this.updateDirectionString();
         this.parent( this );
+
+        if ( this.pushTimer > 0 )
+            this.pushTimer--;
 
         var direction = this.toPlayer();
         var move = false;
@@ -211,6 +247,19 @@ var Pusher = Enemy.extend({
             }
         }
 
+        if ( this.pushTimer > 0 )
+        {
+            this.setCurrentAnimation( this.directionString + "push" );
+        }
+        else if ( this.vel.x || this.vel.y )
+        {
+            this.setCurrentAnimation( this.directionString + "run" );
+        }
+        else
+        {
+            this.setCurrentAnimation( this.directionString + "idle" );
+        }
+
         this.updateMovement();
         return ( this.vel.x || this.vel.y );
     }
@@ -218,7 +267,26 @@ var Pusher = Enemy.extend({
 
 var Shooter = Enemy.extend(
 {
+    init: function( x, y, settings ) {
+        this.range = settings.range || 200;
+        this.speed = settings.speed || .6;
+        settings.image = "shooter";
+        settings.spritewidth = 96;
+        settings.spritewidth = 96;
+        console.log( "shooter init" );
 
+        var directions = [ "down", "left", "up", "right" ];
+        for ( var i = 0; i < directions.length; i++ )
+        {
+            var index = i * 4;
+            this.addAnimation( directions[ i ] + "idle", [ index ] );
+            this.addAnimation( directions[ i ] + "run",
+                [ index, index + 1, index, index + 2 ] );
+            this.addAnimation( directions[ i ] + "shoot", [ index + 3 ] );
+        }
+
+        this.parent( x, y, settings );
+    }
 });
 
 var Doctor = Hugger.extend(
