@@ -6,15 +6,24 @@ var Orb = me.ObjectEntity.extend({
     init: function( x, y, settings )
     {
         settings = settings || {};
-        settings.image        = settings.image        || me.loader.getImage( "maptile" ),
-        settings.spritewidth  = settings.spritewidth  || 48,
-        settings.spriteheight = settings.spriteheight || 48
+
+        settings.image        = settings.image        || "orb",
+        settings.spritewidth  = settings.spritewidth  || 96,
+        settings.spriteheight = settings.spriteheight || 96
         settings.collidable   = true;
+
+        this.last = settings.last;
+        this.addLock = true;
+        if ( this.last )
+            settings.image = "lastorb";
 
         this.parent( x, y, settings );
 
+        this.addAnimation( "play", [ 0, 0, 0, 0, 1, 2, 3, 4 ] );
+        this.setCurrentAnimation( "play" );
+        this.animationspeed = 7;
+
         this.gravity = 0;
-        this.last = settings.last;
         this.hp = 3;
 
         var level = me.game.currentLevel;
@@ -26,7 +35,6 @@ var Orb = me.ObjectEntity.extend({
         this.fading = false;
 
         me.state.current().orbs.push( this );
-
     },
 
     onCollision: function( res, obj )
@@ -35,17 +43,19 @@ var Orb = me.ObjectEntity.extend({
             return;
         }
 
-        if( obj == me.game.player ) {
+        if( obj.type == "weakAttack" || obj.type == "strongAttack" ) {
             console.log( "hello" );
             if( this.last ) {
                 var orbs = me.state.current().orbs;
                 for( var i = 0; i < orbs.length; i ++ ){
                     if( ! orbs[i].last ) {
+                        me.audio.play( "ping" );
                         return;
                     }
                 }
             }
             this.hp -= 1;
+            me.audio.play( "hit" );
         }
 
         if( this.hp <= 0 ) {
@@ -94,16 +104,43 @@ var Orb = me.ObjectEntity.extend({
 
         state.orbs.splice( state.orbs.indexOf( this ), 1 );
 
+        me.audio.play( "orbdeath" );
+
         // end of level?
-        if( state.orbs.length == 0 ) {
+        if( state.orbs.length == 0 )
             me.state.current().nextLevel();
+        else if ( state.orbs.length == 1 )
+            state.orbs[ 0 ].hideLock();
+
+        // not sure if it's safe to remove
+        this.visible = false;
+    },
+
+    hideLock: function()
+    {
+        if ( this.lock )
+        {
+            this.lock.visible = false;
         }
     },
 
     update: function()
     {
-        return false;
+        // why the fuck do i have to do this here FFFFFF
+        if ( this.addLock ) // FUCK THIS SHIT
+        {
+            var lockSettings = new Object();
+            lockSettings.image = "orblock";
+            lockSettings.spritewidth = 96;
+            lockSettings.spriteheight = 96;
+            console.log ( "lockstuff", this.pos.toString(), lockSettings.spritewidth );
+            this.lock = new me.SpriteObject( this.pos.x, this.pos.y, lockSettings );
+            // z hack?
+            me.game.add( this.lock, this.z-1 );
+            me.game.sort();
+            this.addLock = false;
+        }
+
+        return this.parent( this );
     }
 });
-
-

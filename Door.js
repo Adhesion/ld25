@@ -19,6 +19,11 @@ var Door = me.ObjectEntity.extend({
 
         me.state.current().doors.push(this);
     },
+
+    update: function()
+    {
+        return this.parent( this );
+    }
 });
 
 

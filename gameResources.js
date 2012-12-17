@@ -24,6 +24,10 @@ var gameResources = [
     { name: "shooterbullet", type: "image", src: "data/shooterbullet.png" },
     { name: "die", type: "image", src: "data/die.png" },
 
+    { name: "orb", type: "image", src: "data/orb.png" },
+    { name: "lastorb", type: "image", src: "data/lastorb.png" },
+    { name: "orblock", type: "image", src: "data/orblock.png" },
+
     { name: 'hdoor', type: 'image', src: 'data/door_horz.png' },
     { name: 'vdoor', type: 'image', src: 'data/door_vert.png' },
 
