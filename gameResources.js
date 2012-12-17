@@ -20,6 +20,7 @@ var gameResources = [
     { name: "tempAttack", type: "image", src: "data/tempattack.png" },
     { name: "headparticle", type: "image", src: "data/headParticle.png" },
     { name: "dash", type: "image", src: "data/dash.png" },
+    { name: "shooterBullet", type: "image", src: "data/shooterBullet.png" },
 
     { name: 'hdoor', type: 'image', src: 'data/door_horz.png' },
     { name: 'vdoor', type: 'image', src: 'data/door_vert.png' },

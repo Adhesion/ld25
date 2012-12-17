@@ -44,5 +44,6 @@
     <property name="spritewidth" value="96"/>
    </properties>
   </object>
+  <object name="shooter" x="465" y="1745" width="84" height="84"/>
  </objectgroup>
 </map>

@@ -29,6 +29,7 @@ var jsApp = {
         me.entityPool.add( "player", Player );
         me.entityPool.add( "hugger", Hugger );
         me.entityPool.add( "pusher", Pusher );
+        me.entityPool.add( "shooter", Shooter );
         me.entityPool.add( "door", Door);
         me.entityPool.add( "orb", Orb );
 

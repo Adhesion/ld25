@@ -79,6 +79,20 @@ var Enemy = me.ObjectEntity.extend({
 
         this.vel.x += this.toPlayer().x * knockback * -0.5;
         this.vel.y += this.toPlayer().y * knockback * -0.5;
+    },
+
+    fireBullet: function()
+    {
+        // note collide is false as the player checks its own collision, bullet will be recipient
+        var bPosX = this.pos.x + ( this.width / 2 ) + 24;
+        var bPosY = this.pos.y + ( this.height / 2 ) + 24;
+        var bullet = new EnemyBullet( bPosX, bPosY, "shooterBullet", 48, 5, [ 0 ], "shooterBullet", false, 48 );
+        var dir = this.toPlayer();
+        dir.normalize();
+        bullet.vel.x = dir.x * 7.5;
+        bullet.vel.y = dir.y * 7.5;
+        me.game.add( bullet, this.z + 1 );
+        me.game.sort();
     }
 });
 
@@ -269,13 +283,19 @@ var Pusher = Enemy.extend({
 
 var Shooter = Enemy.extend(
 {
-    init: function( x, y, settings ) {
-        this.range = settings.range || 200;
-        this.speed = settings.speed || .6;
+    init: function( x, y, settings )
+    {
+        this.range = settings.range || 400;
+        this.speed = settings.speed || .3;
         settings.image = "shooter";
         settings.spritewidth = 96;
-        settings.spritewidth = 96;
+        settings.spriteheight = 96;
+        this.parent( x, y, settings );
         console.log( "shooter init" );
+
+        this.setMaxVelocity( 3.0, 3.0 );
+
+        this.shootTimer = 0;
 
         var directions = [ "down", "left", "up", "right" ];
         for ( var i = 0; i < directions.length; i++ )
@@ -286,8 +306,53 @@ var Shooter = Enemy.extend(
                 [ index, index + 1, index, index + 2 ] );
             this.addAnimation( directions[ i ] + "shoot", [ index + 3 ] );
         }
+    },
 
-        this.parent( x, y, settings );
+    update: function()
+    {
+        this.updateDirectionString();
+
+        var direction = this.toPlayer();
+        var move = false;
+        if( direction ) {
+            var dist = direction.length();
+            if( dist < this.range && dist > 150 )
+            {
+                direction.normalize();
+                this.vel.x += direction.x * this.speed;
+                this.vel.y += direction.y * this.speed;
+                this.direction = direction;
+                move = true;
+
+                if ( this.shootTimer == 0 )
+                {
+                    this.fireBullet();
+                    this.shootTimer = 150;
+                }
+            }
+        }
+
+        if ( this.shootTimer > 0 )
+            this.shootTimer--;
+
+        if ( this.shootTimer > 135 )
+        {
+            this.setCurrentAnimation( this.directionString + "shoot" );
+        }
+        else if ( this.vel.x || this.vel.y )
+        {
+            this.setCurrentAnimation( this.directionString + "run" );
+        }
+        else
+        {
+            this.setCurrentAnimation( this.directionString + "idle" );
+        }
+
+        this.updateMovement();
+        var move = ( this.vel.x || this.vel.y );
+        if ( move )
+            this.parent( this );
+        return move;
     }
 });
 
@@ -299,4 +364,32 @@ var Doctor = Hugger.extend(
 var Boss = Enemy.extend(
 {
 
+});
+
+var EnemyBullet = PlayerParticle.extend(
+{
+    init: function( x, y, sprite, spritewidth, speed, frames, type, collide, spriteheight )
+    {
+        this.parent( x, y, sprite, spritewidth, speed, frames, type, collide, spriteheight );
+        this.gravity = 0;
+        this.timer = 100;
+        this.collidable = true;
+        this.updateColRect( 12, 24, 12, 24 );
+    },
+
+    onCollision: function( res, obj )
+    {
+        console.log( "enemy bullet collision" );
+        if ( obj == me.game.player )
+            me.game.player.hit();
+        me.game.remove( this );
+    },
+
+    update: function()
+    {
+        this.timer--;
+        if ( this.timer == 0 ) me.game.remove( this );
+        this.updateMovement();
+        return this.parent( this );
+    }
 });
