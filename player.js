@@ -216,11 +216,13 @@ var Player = me.ObjectEntity.extend(
                 this.weakAttackTimer = 15;
                 this.weakAttackType = ++this.weakAttackType % 2;
                 this.attack( "weakAttack" );
+                me.audio.play( "weakattack" + this.weakAttackType );
             }
             else if ( me.input.isKeyPressed( "strongAttack" ) )
             {
                 this.strongAttackTimer = 45;
                 this.attack( "strongAttack" );
+                me.audio.play( "strongattack" );
             }
         }
 
@@ -239,6 +241,8 @@ var Player = me.ObjectEntity.extend(
                 this.attachedList[i].shakeOff();
             }
             this.attachedList.length = 0;
+
+            me.audio.play( "dash" );
         }
     },
 
@@ -285,7 +289,6 @@ var Player = me.ObjectEntity.extend(
         if( obj.door ) {
             return this.parent( obj );
         }
-        console.log( "player checkcol" );
         return null;
     },
 

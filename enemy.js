@@ -59,11 +59,11 @@ var Enemy = me.ObjectEntity.extend({
     {
         if( obj.type == "weakAttack" )
         {
-            this.knockback( 1, 3.0, 40 );
+            this.knockback( 1, 2.0, 30 );
         }
         else if ( obj.type == "strongAttack" )
         {
-            this.knockback( 2, 12.0, 60 );
+            this.knockback( 2, 10.0, 60 );
         }
         else if ( obj == me.game.player && me.game.player.isDashing() )
         {
@@ -74,15 +74,18 @@ var Enemy = me.ObjectEntity.extend({
     knockback: function( damage, amt, length )
     {
         this.hp -= damage;
+        me.audio.play( "hit" );
 
+        // death
         if ( this.hp <= 0 )
         {
-            var dPosX = this.pos.x + ( this.width / 2 );
-            var dPosY = this.pos.y + ( this.height / 2 );
+            var dPosX = this.pos.x + ( this.width / 2 ) - 48;
+            var dPosY = this.pos.y + ( this.height / 2 ) - 48;
             var deathPart = new PlayerParticle( dPosX, dPosY, "die", 96, 5, [ 0, 1, 2, 3, 4, 5 ], "", false );
             me.game.add( deathPart, this.z + 1 );
             me.game.remove( this );
             me.game.sort();
+            me.audio.play( this.deathSound );
             return;
         }
 
@@ -104,7 +107,7 @@ var Enemy = me.ObjectEntity.extend({
 
     fireBullet: function()
     {
-        // note collide is false as the player checks its own collision, bullet will be recipient
+        // note collide is false as the player checks its own collision, bullet will be recipient & get oncollision call
         var bPosX = this.pos.x + ( this.width / 2 ) + 24;
         var bPosY = this.pos.y + ( this.height / 2 ) + 24;
         var bullet = new EnemyBullet( bPosX, bPosY, "shooterBullet", 48, 5, [ 0 ], "shooterBullet", false, 48 );
@@ -114,6 +117,7 @@ var Enemy = me.ObjectEntity.extend({
         bullet.vel.y = dir.y * 5.0;
         me.game.add( bullet, this.z + 1 );
         me.game.sort();
+        me.audio.play( "shoot" );
     }
 });
 
@@ -130,6 +134,8 @@ var Hugger = Enemy.extend({
         this.setFriction( 0.35, 0.35 );
 
         this.isAttached = false;
+
+        this.deathSound = "hugdeath";
 
         this.posDiffX = 0;
         this.posDiffY = 0;
@@ -153,7 +159,7 @@ var Hugger = Enemy.extend({
         // attach if player collision
         if ( obj == me.game.player && !me.game.player.isDashing() )
         {
-            console.log( "attachment" );
+            me.audio.play( "grab" );
             this.isAttached = true;
             this.posDiffX = me.game.player.pos.x - this.pos.x;
             this.posDiffY = me.game.player.pos.y - this.pos.y;
@@ -222,13 +228,15 @@ var Pusher = Enemy.extend({
         settings.spritewidth = 96;
         settings.spriteheight = 96;
 
+        this.parent( x, y, settings );
+
         this.animationspeed = 3;
 
         this.pushTimer = 0;
 
         this.hp = 10;
 
-        this.parent( x, y, settings );
+        this.deathSound = "pushdeath";
 
         this.updateColRect( 32, 32, 10, 86 );
 
@@ -267,6 +275,7 @@ var Pusher = Enemy.extend({
             me.game.player.vel.x += this.direction.x * 10.0;
             me.game.player.vel.y += this.direction.y * 10.0;
             this.pushTimer = 10;
+            me.audio.play( "push" );
         }
     },
 
@@ -321,6 +330,8 @@ var Shooter = Enemy.extend(
         this.hp = 7;
 
         this.setMaxVelocity( 3.0, 3.0 );
+
+        this.deathSound = "shootdeath";
 
         this.shootTimer = 0;
 
@@ -416,12 +427,14 @@ var Doctor = Enemy.extend(
         me.game.doctor = this;
         this.visible = false;
         this.collidable = false;
+        this.enabled = false;
         this.enable();
     },
 
     enable: function()
     {
         this.visible = true;
+        this.enabled = true;
         this.flicker( 500, function() { this.collidable = true; } );
     },
 
@@ -432,9 +445,10 @@ var Doctor = Enemy.extend(
             this.collidable = false;
             console.log( "player doc hit" );
             me.game.player.stunned = true;
-            var duration = 1000;
+            var duration = 2000;
             me.game.player.flicker( duration );
             var fade = '#000000';
+            me.audio.play( "death" );
             me.game.viewport.fadeOut( fade, duration, function() {
                 me.state.current().startLevel( me.levelDirector.getCurrentLevelId() );
             });
@@ -452,6 +466,19 @@ var Doctor = Enemy.extend(
     update: function()
     {
         this.updateDirectionString();
+
+        if ( this.enabled )
+        {
+            if ( this.soundTimer == 0 )
+            {
+                me.audio.play( "doctor" );
+                this.soundTimer = 90;
+            }
+            else
+            {
+                this.soundTimer--;
+            }
+        }
 
         if ( this.collidable )
         {
@@ -489,7 +516,7 @@ var Boss = Enemy.extend(
 {
     init: function( x, y, settings )
     {
-
+        this.deathSound = "bossdeath";
     },
 
     onCollision: function( res, obj )
@@ -521,6 +548,7 @@ var EnemyBullet = PlayerParticle.extend(
         {
             me.game.player.hit();
             me.game.remove( this );
+            me.audio.play( "bullethit" );
         }
     },
 

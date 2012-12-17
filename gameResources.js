@@ -40,5 +40,25 @@ var gameResources = [
 
     { name: "16x16_font", type: "image", src: "data/16x16_font.png" },
     { name: "32x32_font", type: "image", src: "data/32x32_font.png" },
-    { name: "64x64_font", type: "image", src: "data/64x64_font.png" }
+    { name: "64x64_font", type: "image", src: "data/64x64_font.png" },
+
+    { name: "bossdeath", type: "audio", src: "data/", channels : 1 },
+    { name: "bullethit", type: "audio", src: "data/", channels : 1 },
+    { name: "dash", type: "audio", src: "data/", channels : 1 },
+    { name: "death", type: "audio", src: "data/", channels : 1 },
+    { name: "door", type: "audio", src: "data/", channels : 1 },
+    { name: "grab", type: "audio", src: "data/", channels : 1 },
+    { name: "hit", type: "audio", src: "data/", channels : 1 },
+    { name: "hugdeath", type: "audio", src: "data/", channels : 1 },
+    { name: "orbdeath", type: "audio", src: "data/", channels : 1 },
+    { name: "ping", type: "audio", src: "data/", channels : 1 },
+    { name: "push", type: "audio", src: "data/", channels : 1 },
+    { name: "pushdeath", type: "audio", src: "data/", channels : 1 },
+    { name: "shoot", type: "audio", src: "data/", channels : 1 },
+    { name: "shootdeath", type: "audio", src: "data/", channels : 1 },
+    { name: "strongattack", type: "audio", src: "data/", channels : 1 },
+    { name: "weakattack0", type: "audio", src: "data/", channels : 1 },
+    { name: "weakattack1", type: "audio", src: "data/", channels : 1 },
+
+    { name: "doctor", type: "audio", src: "data/", channels : 2 }
 ];

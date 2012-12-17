@@ -82,6 +82,7 @@ var Orb = me.ObjectEntity.extend({
             var door = state.doors[d];
             door.require--;
             if( door.require == 0 ) {
+                me.audio.play( "door" );
                 // TODO mark as opened?
                 me.game.remove(door);
                 opened.push(door);
