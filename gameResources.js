@@ -49,6 +49,7 @@ var gameResources = [
     { name: "collision_tiles", type: "image", src: "data/collision_tiles.png" },
     { name: "maptile", type: "image", src: "data/maptile.png" },
     { name: "maptile2", type: "image", src: "data/maptile2.png" },
+    { name: "maptile3", type: "image", src: "data/maptile3.png" },
     { name: "corruption", type: "image", src: "data/corruption.png" },
     { name: "bg1", type: "image", src: "data/bg1.png" },
 	{ name: "bg2", type: "image", src: "data/bg2.png" },
