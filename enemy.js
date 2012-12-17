@@ -89,8 +89,8 @@ var Enemy = me.ObjectEntity.extend({
         var bullet = new EnemyBullet( bPosX, bPosY, "shooterBullet", 48, 5, [ 0 ], "shooterBullet", false, 48 );
         var dir = this.toPlayer();
         dir.normalize();
-        bullet.vel.x = dir.x * 7.5;
-        bullet.vel.y = dir.y * 7.5;
+        bullet.vel.x = dir.x * 5.0;
+        bullet.vel.y = dir.y * 5.0;
         me.game.add( bullet, this.z + 1 );
         me.game.sort();
     }
@@ -324,10 +324,10 @@ var Shooter = Enemy.extend(
                 this.direction = direction;
                 move = true;
 
-                if ( this.shootTimer == 0 )
+                if ( this.shootTimer == 0 && dist > 50 )
                 {
                     this.fireBullet();
-                    this.shootTimer = 150;
+                    this.shootTimer = 180;
                 }
             }
         }
