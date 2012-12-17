@@ -24,8 +24,9 @@ var Orb = me.ObjectEntity.extend({
         this.animationspeed = 7;
 
         this.gravity = 0;
-        this.hp = 3;
-
+        this.hp = 7;
+		this.lastHit = null; 
+		
         var level = me.game.currentLevel;
         this.corrupted = level.getLayerByName( "corrupted background" );
         this.normal = level.getLayerByName( "corrupted foreground" );
@@ -42,23 +43,28 @@ var Orb = me.ObjectEntity.extend({
         if( this.hp <= 0 ) {
             return;
         }
-
-        if( obj.type == "weakAttack" || obj.type == "strongAttack" ) {
-            console.log( "hello" );
-            if( this.last ) {
-                var orbs = me.state.current().orbs;
-                for( var i = 0; i < orbs.length; i ++ ){
-                    if( ! orbs[i].last ) {
-                        me.audio.play( "ping" );
-                        return;
-                    }
-                }
-            }
-            this.hp -= 1;
-            me.audio.play( "hit" );
+		if(this.hitDelay > 0) this.hitDelay--;
+		
+        if( obj != this.lastHit && obj.type == "weakAttack" || obj.type == "strongAttack" ) {
+            
+			this.lastHit = obj;
+			if( this.last ) {
+				var orbs = me.state.current().orbs;
+				for( var i = 0; i < orbs.length; i ++ ){
+					if( ! orbs[i].last ) {
+						me.audio.play( "ping" );
+						return;
+					}
+				}
+			}
+			this.hp -= 1;
+			me.audio.play( "hit" );
+			me.game.viewport.shake(10, 5, me.game.viewport.AXIS.BOTH);
+			
         }
 
         if( this.hp <= 0 ) {
+			me.game.viewport.shake(20, 20, me.game.viewport.AXIS.BOTH);
             this.corrupt();
         }
 

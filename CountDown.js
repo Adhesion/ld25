@@ -3,7 +3,7 @@ var CountDown = me.HUD_Item.extend({
     init: function(x, y)
     {
         this.parent( x || 0, y || 0 );
-        this.font = new me.BitmapFont("16x16_font", 16);
+        this.font = new me.BitmapFont("64x64_font", 64);
         this.font.set( "left" );
     },
 
@@ -11,7 +11,7 @@ var CountDown = me.HUD_Item.extend({
     {
         this.font.draw(
             context,
-            "TIMER: " + this.value,
+            "" + this.value,
             this.pos.x + x,
             this.pos.y + y
         );

@@ -129,7 +129,7 @@ var Hugger = Enemy.extend({
         settings.image = settings.image || "hugger";
         this.parent( x, y, settings );
 
-        this.hp = 5;
+        this.hp = 3;
 
         this.setFriction( 0.35, 0.35 );
 
@@ -520,18 +520,22 @@ var Boss = Enemy.extend(
         settings.spriteheight = 240;
         this.parent( x, y, settings );
 
-        this.hp = 40;
+        this.hp = 30;
 
         this.gravity = 0;
+		// frames to play expoding animation. 
+		this.dieing = false;
+		this.exploding = 250;
 
         this.deathSound = "bossdeath";
 
         this.shootTimer = 90;
         this.hitTimer = 0;
 
-        this.addAnimation( "idle", [ 0, 0, 0, 0, 0, 0, 1 ] );
+        this.addAnimation( "idle", [ 0, 0, 0, 1 ] );
         this.addAnimation( "shoot", [ 2 ] );
         this.addAnimation( "hit", [ 3 ] );
+        this.addAnimation( "die", [ 0, 2, 3 ] );
     },
 
     onCollision: function( res, obj )
@@ -553,39 +557,71 @@ var Boss = Enemy.extend(
 
     knockback: function( damage, amt, length )
     {
-        this.parent( damage, amt, length );
-        if ( this.hp <= 0 )
-        {
-            console.log( "GAMEOVER" );
-            me.state.change( me.state.GAMEOVER );
+        //this.parent( damage, amt, length );
+        
+		this.hp -= damage;
+        me.audio.play( "hit" );
+
+		if ( this.hp <= 0 && !this.dieing)
+        {	
+			me.audio.play( this.deathSound );
+			this.dieing = true;
+			this.setCurrentAnimation( "die" );
+			this.hp = 1; 
+			me.game.viewport.shake(10, this.exploding, me.game.viewport.AXIS.BOTH);
+            // moved to 'update' --> see dieing part. 
+			//console.log( "GAMEOVER" );
+           // me.state.change( me.state.GAMEOVER );
         }
     },
 
     update: function()
     {
-        if ( this.shootTimer == 0 )
-        {
-            this.fireBullet( "bossBullet", 8.0 );
-            this.shootTimer = 90;
-        }
-        else
-            this.shootTimer--;
+		if(this.dieing){
+			this.exploding--;
+			
+			this.pos.x += Math.random()*2-1;
+			this.pos.y += Math.random()*2-1;
+			
+			if(this.exploding % 5 == 0){
+				var dPosX = this.pos.x + ( this.width / 2 ) - 48 + Math.random()* 200-100;
+				var dPosY = this.pos.y + ( this.height / 2 ) - 48 + Math.random()* 200-100;
+				var deathPart = new PlayerParticle( dPosX, dPosY, "die", 96, 5, [ 0, 1, 2, 3, 4, 5 ], "", false );
+				me.game.add( deathPart, this.z + 1 );
+				me.game.sort();
+			}
+			
+			if(this.exploding <= 0){
+				console.log( "GAMEOVER" );
+				me.state.change( me.state.GAMEOVER );
+			}
+			
+		}else{
+	
+			if ( this.shootTimer == 0 )
+			{
+				this.fireBullet( "bossBullet", 8.0 );
+				this.shootTimer = 90;
+			}
+			else
+				this.shootTimer--;
 
-        if ( this.shootTimer > 40 )
-        {
-            this.setCurrentAnimation( "shoot" );
-        }
-        else if ( this.hitTimer > 0 )
-        {
-            this.setCurrentAnimation( "hit" );
-            this.hitTimer--;
-            if ( this.hitTimer == 0 )
-                this.collidable = true;
-        }
-        else
-        {
-            this.setCurrentAnimation( "idle" );
-        }
+			if ( this.shootTimer > 40 )
+			{
+				this.setCurrentAnimation( "shoot" );
+			}
+			else if ( this.hitTimer > 0 )
+			{
+				this.setCurrentAnimation( "hit" );
+				this.hitTimer--;
+				if ( this.hitTimer == 0 )
+					this.collidable = true;
+			}
+			else
+			{
+				this.setCurrentAnimation( "idle" );
+			}
+		}
 
         return this.parent( this );
     }

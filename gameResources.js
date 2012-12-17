@@ -7,6 +7,19 @@
  */
 
 var gameResources = [
+	{ name: "intro", type: "image", src: "data/intro.png" },
+    { name: "introcta", type: "image", src: "data/introcta.png" },
+    { name: "gameover", type: "image", src: "data/gameover.png" },
+	
+	{ name: "intro_bg", type: "image", src: "data/intro_bg.png" },
+    { name: "intro_glasses1", type: "image", src: "data/intro_glasses1.png" },
+    { name: "intro_glasses2", type: "image", src: "data/intro_glasses2.png" },
+    { name: "intro_glasses3", type: "image", src: "data/intro_glasses3.png" },
+    { name: "intro_glasses4", type: "image", src: "data/intro_glasses4.png" },
+    { name: "intro_mars", type: "image", src: "data/intro_mars.png" },
+    { name: "intro_radmars1", type: "image", src: "data/intro_radmars1.png" },
+    { name: "intro_radmars2", type: "image", src: "data/intro_radmars2.png" },
+
     { name: "testenemy", type: "image", src: "data/tempenemy.png" },
     { name: "hugger", type: "image", src: "data/hugger.png" },
     { name: "pusher", type: "image", src: "data/pusher.png" },
@@ -39,10 +52,11 @@ var gameResources = [
     { name: "corruption", type: "image", src: "data/corruption.png" },
     { name: "bg1", type: "image", src: "data/bg1.png" },
 	{ name: "bg2", type: "image", src: "data/bg2.png" },
-	{ name: "bg2", type: "image", src: "data/bg3.png" },
+	{ name: "bg3", type: "image", src: "data/bg3.png" },
 
     { name: "level1", type: "tmx", src: "data/level1.tmx" },
     { name: "level2", type: "tmx", src: "data/level2.tmx" },
+    { name: "level3", type: "tmx", src: "data/level3.tmx" },
     { name: "boxyrooms", type: "tmx", src: "data/boxyrooms.tmx" },
     { name: "testlevel", type: "tmx", src: "data/testlevel.tmx" },
 
@@ -68,5 +82,7 @@ var gameResources = [
     { name: "weakattack0", type: "audio", src: "data/", channels : 1 },
     { name: "weakattack1", type: "audio", src: "data/", channels : 1 },
 
-    { name: "doctor", type: "audio", src: "data/", channels : 2 }
+    { name: "doctor", type: "audio", src: "data/", channels : 2 },
+	
+	{ name: "radmarslogo", type: "audio", src: "data/", channels : 2 }
 ];
