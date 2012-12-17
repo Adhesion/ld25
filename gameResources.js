@@ -38,6 +38,8 @@ var gameResources = [
     { name: "maptile2", type: "image", src: "data/maptile2.png" },
     { name: "corruption", type: "image", src: "data/corruption.png" },
     { name: "bg1", type: "image", src: "data/bg1.png" },
+	{ name: "bg2", type: "image", src: "data/bg2.png" },
+	{ name: "bg2", type: "image", src: "data/bg3.png" },
 
     { name: "level1", type: "tmx", src: "data/level1.tmx" },
     { name: "level2", type: "tmx", src: "data/level2.tmx" },
