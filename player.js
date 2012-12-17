@@ -35,10 +35,13 @@ var Player = me.ObjectEntity.extend(
 
         this.headParticleTimer = 50;
 
+        this.stunned = false;
+        this.attachedList = new Array();
+
         this.updateColRect( 22, 52, 10, 76 );
 
         var directions = [ "down", "left", "up", "right" ];
-        for ( var i = 0; i < 4; i++ )
+        for ( var i = 0; i < directions.length; i++ )
         {
             var index = i * 7;
             this.addAnimation( directions[ i ] + "idle", [ index ] );
@@ -156,8 +159,22 @@ var Player = me.ObjectEntity.extend(
         me.game.sort();
     },
 
+    hit: function()
+    {
+        this.stunned = true;
+        this.flicker( 90, function() { this.stunned = false; } );
+    },
+
+    addAttached: function( enemy )
+    {
+        this.attachedList[ this.attachedList.length ] = enemy;
+    },
+
     checkInput: function()
     {
+        if ( this.stunned )
+            return;
+
         var tempDir = new me.Vector2d( 0.0, 0.0 );
         if ( !this.isDashing() && this.weakAttackTimer == 0 &&
             this.strongAttackTimer < 30 )
@@ -207,6 +224,7 @@ var Player = me.ObjectEntity.extend(
             }
         }
 
+        // dash
         // dash also has to be on cooldown
         if ( me.input.isKeyPressed( "dash" ) && this.dashTimer == 0 )
         {
@@ -215,6 +233,12 @@ var Player = me.ObjectEntity.extend(
             this.dashTimer = this.dashTimerMax;
 
             this.spawnDashParticle();
+
+            for ( var i = 0; i < this.attachedList.length; i++ )
+            {
+                this.attachedList[i].shakeOff();
+            }
+            this.attachedList.length = 0;
         }
     },
 
@@ -261,6 +285,7 @@ var Player = me.ObjectEntity.extend(
         if( obj.door ) {
             return this.parent( obj );
         }
+        console.log( "player checkcol" );
         return null;
     },
 
@@ -270,6 +295,13 @@ var Player = me.ObjectEntity.extend(
         var colres = me.game.collide(this);
 
         this.checkInput();
+
+        if ( this.attachedList.length > 0 )
+        {
+            var slowVelX = this.origVelocity.x - ( this.attachedList.length );
+            var slowVelY = this.origVelocity.y - ( this.attachedList.length );
+            this.setMaxVelocity( slowVelX, slowVelY );
+        }
 
         this.updateAnimation();
 

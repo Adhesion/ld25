@@ -23,6 +23,20 @@ var Enemy = me.ObjectEntity.extend({
         this.setMaxVelocity( this.origVelocity, this.origVelocity );
 
         this.hp = 3;
+
+        this.directionString = "down";
+    },
+
+    updateDirectionString: function()
+    {
+        if ( this.vel.y > 0.0 )
+            this.directionString = "down";
+        if ( this.vel.y < 0.0 )
+            this.directionString = "up";
+        if ( this.vel.x > 0.0 )
+            this.directionString = "right";
+        if ( this.vel.x < 0.0 )
+            this.directionString = "left";
     },
 
     /** Get a vector to the player. */
@@ -43,27 +57,28 @@ var Enemy = me.ObjectEntity.extend({
 
     onCollision: function( res, obj )
     {
-        if( obj.type == "weakAttack" || obj.type == "strongAttack" )
+        if( obj.type == "weakAttack" || obj.type == "strongAttack" ||
+            ( obj == me.game.player && me.game.player.isDashing() ) )
         {
-            res.normalize();
-            this.hp -= 1;
-            var knockback = 12.0;
-            if ( obj.type == "strongAttack" )
-                knockback = 18.0;
-
-            this.setMaxVelocity( knockback, knockback );
-            this.collidable = false;
-            this.flicker( 60, function()
-                { this.setMaxVelocity( this.origVelocity, this.origVelocity );
-                  this.collidable = true; } );
-
-            this.vel.x += this.toPlayer().x * knockback * -0.5;
-            this.vel.y += this.toPlayer().y * knockback * -0.5;
+            this.knockback( obj );
         }
-        if ( obj == me.game.player )
-        {
+    },
 
-        }
+    knockback: function( obj )
+    {
+        this.hp -= 1;
+        var knockback = 12.0;
+        if ( obj.type == "strongAttack" )
+            knockback = 18.0;
+
+        this.setMaxVelocity( knockback, knockback );
+        this.collidable = false;
+        this.flicker( 60, function()
+        { this.setMaxVelocity( this.origVelocity, this.origVelocity );
+            this.collidable = true; } );
+
+        this.vel.x += this.toPlayer().x * knockback * -0.5;
+        this.vel.y += this.toPlayer().y * knockback * -0.5;
     }
 });
 
@@ -72,37 +87,90 @@ var Hugger = Enemy.extend({
     {
         this.range = settings.range || 200;
         this.speed = settings.speed || .6;
+        settings.image = "hugger";
         this.parent( x, y, settings );
 
         this.setFriction( 0.35, 0.35 );
+
+        this.isAttached = false;
+
+        this.posDiffX = 0;
+        this.posDiffY = 0;
+
+        var directions = [ "down", "left", "up", "right" ];
+        for ( var i = 0; i < directions.length; i++ )
+        {
+            var index = i * 4;
+            this.addAnimation( directions[ i ] + "run",
+                [ index, index + 1, index, index + 2 ] );
+            this.addAnimation( directions[ i ] + "grab", [ index + 3 ] );
+        }
+    },
+
+    onCollision: function( res, obj )
+    {
+        this.parent( res, obj );
+
+        // attach if player collision
+        if ( obj == me.game.player && !me.game.player.isDashing() )
+        {
+            console.log( "attachment" );
+            this.isAttached = true;
+            this.posDiffX = me.game.player.pos.x - this.pos.x;
+            this.posDiffY = me.game.player.pos.y - this.pos.y;
+            this.collidable = false;
+            obj.addAttached( this );
+        }
+    },
+
+    shakeOff: function()
+    {
+        this.isAttached = false;
+        this.flicker( 60, function() { this.collidable = true } );
     },
 
     /** Run towards the player when it's in range. */
     update: function()
     {
-        this.parent( this );
+        //this.parent( this );
+        this.updateDirectionString();
 
-        var direction = this.toPlayer();
-        var move = false;
-        if( direction ) {
-            var dist = direction.length();
-            if( dist < this.range && dist > 0) {
-                direction.normalize();
-                this.vel.x += direction.x * this.speed;
-                this.vel.y += direction.y * this.speed;
-                this.direction = direction;
-                move = true;
-            }
+        if ( this.isAttached )
+        {
+            this.setCurrentAnimation( this.directionString + "grab" );
+            this.pos.x = me.game.player.pos.x - this.posDiffX;
+            this.pos.y = me.game.player.pos.y - this.posDiffY;
+            this.vel.x = 0;
+            this.vel.y = 0;
         }
+        else if ( this.collidable )
+        {
+            var direction = this.toPlayer();
+            var move = false;
+            if( direction ) {
+                var dist = direction.length();
+                if( dist < this.range && dist > 0) {
+                    this.setCurrentAnimation( this.directionString + "run" );
+                    direction.normalize();
+                    this.vel.x += direction.x * this.speed;
+                    this.vel.y += direction.y * this.speed;
+                    this.direction = direction;
+                    move = true;
+                }
+            }
 
-        // disabling this for now
-        if( ! move ) {
-            //this.vel.x = 0;
-            //this.vel.y = 0;
+            // disabling this for now
+            if( ! move ) {
+                //this.vel.x = 0;
+                //this.vel.y = 0;
+            }
         }
 
         this.updateMovement();
 
+        // need to check collidable to finish flicker
+        if ( move || !this.collidable )
+            this.parent( this );
         return move;
     }
 });
@@ -148,3 +216,17 @@ var Pusher = Enemy.extend({
     }
 });
 
+var Shooter = Enemy.extend(
+{
+
+});
+
+var Doctor = Enemy.extend(
+{
+
+});
+
+var Boss = Enemy.extend(
+{
+
+});
