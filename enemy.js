@@ -74,16 +74,32 @@ var Enemy = me.ObjectEntity.extend({
     knockback: function( damage, amt, length )
     {
         this.hp -= damage;
+
+        if ( this.hp <= 0 )
+        {
+            var dPosX = this.pos.x + ( this.width / 2 );
+            var dPosY = this.pos.y + ( this.height / 2 );
+            var deathPart = new PlayerParticle( dPosX, dPosY, "die", 96, 5, [ 0, 1, 2, 3, 4, 5 ], "", false );
+            me.game.add( deathPart, this.z + 1 );
+            me.game.remove( this );
+            me.game.sort();
+            return;
+        }
+
         var knockback = amt;
 
-        this.setMaxVelocity( knockback, knockback );
-        this.collidable = false;
-        this.flicker( length, function()
-        { this.setMaxVelocity( this.origVelocity, this.origVelocity );
-            this.collidable = true; } );
+        if ( length > 0 && amt > 0 )
+        {
+            this.setMaxVelocity( knockback, knockback );
 
-        this.vel.x += this.toPlayer().x * knockback * -0.5;
-        this.vel.y += this.toPlayer().y * knockback * -0.5;
+            this.collidable = false;
+            this.flicker( length, function()
+            { this.setMaxVelocity( this.origVelocity, this.origVelocity );
+                this.collidable = true; } );
+
+            this.vel.x += this.toPlayer().x * knockback * -0.5;
+            this.vel.y += this.toPlayer().y * knockback * -0.5;
+        }
     },
 
     fireBullet: function()
@@ -108,6 +124,8 @@ var Hugger = Enemy.extend({
         this.speed = settings.speed || .6;
         settings.image = settings.image || "hugger";
         this.parent( x, y, settings );
+
+        this.hp = 5;
 
         this.setFriction( 0.35, 0.35 );
 
@@ -208,6 +226,8 @@ var Pusher = Enemy.extend({
 
         this.pushTimer = 0;
 
+        this.hp = 10;
+
         this.parent( x, y, settings );
 
         this.updateColRect( 32, 32, 10, 86 );
@@ -297,6 +317,8 @@ var Shooter = Enemy.extend(
         settings.spriteheight = 96;
         this.parent( x, y, settings );
         console.log( "shooter init" );
+
+        this.hp = 7;
 
         this.setMaxVelocity( 3.0, 3.0 );
 
@@ -419,11 +441,11 @@ var Doctor = Enemy.extend(
         }
         else if( obj.type == "weakAttack" )
         {
-            this.knockback( 0, 1.0, 10 );
+            this.knockback( 0, 0.7, 0 );
         }
         else if ( obj.type == "strongAttack" )
         {
-            this.knockback( 0, 3.0, 15 );
+            this.knockback( 0, 2.0, 10 );
         }
     },
 
@@ -465,7 +487,20 @@ var Doctor = Enemy.extend(
 
 var Boss = Enemy.extend(
 {
+    init: function( x, y, settings )
+    {
 
+    },
+
+    onCollision: function( res, obj )
+    {
+
+    },
+
+    update: function()
+    {
+
+    }
 });
 
 var EnemyBullet = PlayerParticle.extend(
