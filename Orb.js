@@ -13,7 +13,7 @@ var Orb = me.ObjectEntity.extend({
         settings.collidable   = true;
 
         this.last = settings.last;
-        this.addLock = true;
+        this.addLock = this.last;
         if ( this.last )
             settings.image = "lastorb";
 
@@ -25,7 +25,7 @@ var Orb = me.ObjectEntity.extend({
 
         this.gravity = 0;
         this.hp = 10;
-		this.timeBonus = 20.0;
+		this.timeBonus = 30.0;
 		
         var level = me.game.currentLevel;
         this.corrupted = level.getLayerByName( "corrupted background" );
@@ -136,14 +136,17 @@ var Orb = me.ObjectEntity.extend({
         // why the fuck do i have to do this here FFFFFF
         if ( this.addLock ) // FUCK THIS SHIT
         {
-            var lockSettings = new Object();
+            /*var lockSettings = new Object();
             lockSettings.image = "orblock";
             lockSettings.spritewidth = 96;
             lockSettings.spriteheight = 96;
-            console.log ( "lockstuff", this.pos.toString(), lockSettings.spritewidth );
-            this.lock = new me.SpriteObject( this.pos.x, this.pos.y, lockSettings );
+            console.log ( "lockstuff", this.pos.toString(), lockSettings.spritewidth );*/
+            //this.lock = new me.SpriteObject( this.pos.x, this.pos.y, lockSettings );
             // z hack?
-            me.game.add( this.lock, this.z-1 );
+
+            this.lock = new PlayerParticle( this.pos.x, this.pos.y, "orblock", 96, 0, [ 0 ], "", false, 96 );
+            this.lock.setCurrentAnimation( "play" );
+            me.game.add( this.lock, this.z+1 );
             me.game.sort();
             this.addLock = false;
         }

@@ -53,5 +53,10 @@
   </object>
   <object name="doctor" x="1826" y="1185" width="213" height="155"/>
   <object name="boss" x="324" y="1304" width="365" height="380"/>
+  <object name="orb" x="369" y="1845" width="79" height="82">
+   <properties>
+    <property name="last" value="true"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>
