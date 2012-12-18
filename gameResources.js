@@ -85,5 +85,11 @@ var gameResources = [
     { name: "doctor", type: "audio", src: "data/", channels : 2 },
     { name: "bosshit", type: "audio", src: "data/", channels : 2 },
 	
-	{ name: "radmarslogo", type: "audio", src: "data/", channels : 2 }
+	{ name: "radmarslogo", type: "audio", src: "data/", channels : 2 },
+
+    { name: "level1", type: "audio", src: "data/", channels : 2 },
+    { name: "level2", type: "audio", src: "data/", channels : 2 },
+    { name: "level3", type: "audio", src: "data/", channels : 2 },
+    { name: "brinkintro", type: "audio", src: "data/", channels : 2 },
+    { name: "gameover", type: "audio", src: "data/", channels : 2 }
 ];
