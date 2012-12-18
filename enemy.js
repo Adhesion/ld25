@@ -140,8 +140,6 @@ var Hugger = Enemy.extend({
         this.posDiffX = 0;
         this.posDiffY = 0;
 
-        console.log( "hugger init" );
-
         var directions = [ "down", "left", "up", "right" ];
         for ( var i = 0; i < directions.length; i++ )
         {
@@ -460,7 +458,6 @@ var Doctor = Enemy.extend(
         if ( obj == me.game.player )
         {
             this.collidable = false;
-            console.log( "player doc hit" );
             me.game.player.stunned = true;
             var duration = 2000;
             me.game.player.flicker( duration );
@@ -610,7 +607,6 @@ var Boss = Enemy.extend(
 			}
 			
 			if(this.exploding <= 0){
-				console.log( "GAMEOVER" );
 				me.state.change( me.state.GAMEOVER );
 			}
 			
