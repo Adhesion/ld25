@@ -632,7 +632,7 @@ var Boss = Enemy.extend(
 			
 		}else{
 
-			if ( this.shootTimer == 0 && this.toPlayer().length() < 1000 )
+			if ( this.shootTimer == 0 )
 			{
 				this.fireBullet( "bossBullet", 8.0 );
 				this.shootTimer = 90;
