@@ -567,6 +567,8 @@ var Boss = Enemy.extend(
             }
             this.hitTimer = 10;
             this.collidable = false;
+
+            me.audio.play( "bosshit" );
         }
     },
 
