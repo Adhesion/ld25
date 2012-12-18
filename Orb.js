@@ -25,7 +25,7 @@ var Orb = me.ObjectEntity.extend({
 
         this.gravity = 0;
         this.hp = 10;
-		this.timeBonus = 15.0;
+		this.timeBonus = 20.0;
 		
         var level = me.game.currentLevel;
         this.corrupted = level.getLayerByName( "corrupted background" );
