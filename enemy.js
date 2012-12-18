@@ -118,6 +118,17 @@ var Enemy = me.ObjectEntity.extend({
         me.game.add( bullet, this.z + 1 );
         me.game.sort();
         me.audio.play( "shoot" );
+    },
+
+    isStuck: function( colres)
+    {
+        var val = ( this.pos.x == this.lastPosX &&
+            this.pos.y == this.lastPosY && ( colres.x != 0 || colres.y != 0 ) );
+
+        this.lastPosX = this.pos.x;
+        this.lastPosY = this.pos.y;
+
+        return val;
     }
 });
 
@@ -308,7 +319,14 @@ var Pusher = Enemy.extend({
             this.setCurrentAnimation( this.directionString + "idle" );
         }
 
-        this.updateMovement();
+        var colres = this.updateMovement();
+
+        if ( this.isStuck( colres ) )
+        {
+            this.direction.x *= -1.0;
+            this.direction.y *= -1.0;
+        }
+
         return ( this.vel.x || this.vel.y );
     }
 });
