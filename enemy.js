@@ -135,7 +135,7 @@ var Enemy = me.ObjectEntity.extend({
 var Hugger = Enemy.extend({
     init: function( x, y, settings )
     {
-        this.range = settings.range || 200;
+        this.range = settings.range || 350;
         this.speed = settings.speed || .6;
         settings.image = settings.image || "hugger";
         this.parent( x, y, settings );
