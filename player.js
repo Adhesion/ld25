@@ -217,18 +217,22 @@ var Player = me.ObjectEntity.extend(
                 this.weakAttackType = ++this.weakAttackType % 2;
                 this.attack( "weakAttack" );
                 me.audio.play( "weakattack" + this.weakAttackType );
+
+                this.removeEnemies();
             }
             else if ( me.input.isKeyPressed( "strongAttack" ) )
             {
                 this.strongAttackTimer = 45;
                 this.attack( "strongAttack" );
                 me.audio.play( "strongattack" );
+
+                this.removeEnemies();
             }
         }
 
         // dash
         // dash also has to be on cooldown
-        if ( me.input.isKeyPressed( "dash" ) && this.dashTimer == 0 )
+        if ( me.input.isKeyPressed( "dash" ) && this.dashTimer == 0 && this.attachedList.length == 0 )
         {
             this.setMaxVelocity( this.origVelocity.x * 2.5,
                                  this.origVelocity.y * 2.5 );
@@ -236,14 +240,17 @@ var Player = me.ObjectEntity.extend(
 
             this.spawnDashParticle();
 
-            for ( var i = 0; i < this.attachedList.length; i++ )
-            {
-                this.attachedList[i].shakeOff();
-            }
-            this.attachedList.length = 0;
-
             me.audio.play( "dash" );
         }
+    },
+
+    removeEnemies: function()
+    {
+        for ( var i = 0; i < this.attachedList.length; i++ )
+        {
+            this.attachedList[i].shakeOff();
+        }
+        this.attachedList.length = 0;
     },
 
     spawnDashParticle: function()
