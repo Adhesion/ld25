@@ -24,7 +24,7 @@ var Orb = me.ObjectEntity.extend({
         this.animationspeed = 7;
 
         this.gravity = 0;
-        this.hp = 7;
+        this.hp = 10;
 		this.timeBonus = 15.0;
 		
         var level = me.game.currentLevel;
@@ -58,7 +58,8 @@ var Orb = me.ObjectEntity.extend({
 			this.hp -= 1;
 			me.audio.play( "hit" );
 			me.game.viewport.shake(10, 5, me.game.viewport.AXIS.BOTH);
-			
+			this.collidable = false;
+			this.flicker( 10, function() { this.collidable = true; } );
         }
 
         if( this.hp <= 0 ) {
