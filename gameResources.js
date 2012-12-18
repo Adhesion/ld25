@@ -35,8 +35,8 @@ var gameResources = [
     { name: "tempAttack", type: "image", src: "data/tempattack.png" },
     { name: "headparticle", type: "image", src: "data/headParticle.png" },
     { name: "dash", type: "image", src: "data/dash.png" },
-    { name: "shooterbullet", type: "image", src: "data/shooterbullet.png" },
-    { name: "bossbullet", type: "image", src: "data/bossbullet.png" },
+    { name: "shooterbullet", type: "image", src: "data/shooterBullet.png" },
+    { name: "bossbullet", type: "image", src: "data/bossBullet.png" },
     { name: "die", type: "image", src: "data/die.png" },
 
     { name: "orb", type: "image", src: "data/orb.png" },
