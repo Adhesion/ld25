@@ -120,7 +120,7 @@ var TitleScreen = me.ScreenObject.extend({
         }
 
         me.input.bindKey( me.input.KEY.ENTER, "enter", true );
-        //me.audio.playTrack( "ld23-theme" );
+        me.audio.playTrack( "brinkintro" );
     },
 
     update: function() {
@@ -162,7 +162,8 @@ var GameOverScreen = me.ScreenObject.extend(
         {
             this.background = me.loader.getImage( "gameover" );
         }
-        //me.audio.playTrack( "ld23-theme" );
+        me.audio.stopTrack();
+        me.audio.play( "gameover" );
     },
     
     draw: function( context, x, y )
@@ -267,6 +268,9 @@ var PlayScreen = me.ScreenObject.extend({
         this.doors = [];
         this.orbs = [];
         me.game.HUD.removeItem( "timer" );
+
+        me.audio.stopTrack;
+        me.audio.playTrack( level );
 
         me.game.viewport.fadeIn(
             fade,
