@@ -344,7 +344,7 @@ var Shooter = Enemy.extend(
 
         this.hp = 7;
 
-        this.setMaxVelocity( 3.0, 3.0 );
+        this.setMaxVelocity( 2.0, 2.0 );
 
         this.deathSound = "shootdeath";
 
@@ -379,7 +379,7 @@ var Shooter = Enemy.extend(
 
                 if ( this.shootTimer == 0 && dist > 50 )
                 {
-                    this.fireBullet();
+                    this.fireBullet( "shooterBullet", 8.0 );
                     this.shootTimer = 180;
                 }
             }
