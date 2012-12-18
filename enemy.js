@@ -613,8 +613,8 @@ var Boss = Enemy.extend(
 			}
 			
 		}else{
-	
-			if ( this.shootTimer == 0 )
+
+			if ( this.shootTimer == 0 && this.toPlayer().length() < 1000 )
 			{
 				this.fireBullet( "bossBullet", 8.0 );
 				this.shootTimer = 90;
@@ -622,16 +622,16 @@ var Boss = Enemy.extend(
 			else
 				this.shootTimer--;
 
-			if ( this.shootTimer > 40 )
+            if ( this.hitTimer > 0 )
+            {
+                this.setCurrentAnimation( "hit" );
+                this.hitTimer--;
+                if ( this.hitTimer == 0 )
+                    this.collidable = true;
+            }
+			else if ( this.shootTimer > 40 )
 			{
 				this.setCurrentAnimation( "shoot" );
-			}
-			else if ( this.hitTimer > 0 )
-			{
-				this.setCurrentAnimation( "hit" );
-				this.hitTimer--;
-				if ( this.hitTimer == 0 )
-					this.collidable = true;
 			}
 			else
 			{

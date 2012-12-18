@@ -270,7 +270,8 @@ var PlayScreen = me.ScreenObject.extend({
         me.game.HUD.removeItem( "timer" );
 
         me.audio.stopTrack;
-        me.audio.playTrack( level );
+        if ( level != "testlevel" ) // TODO awful hack right here
+            me.audio.playTrack( level );
 
         me.game.viewport.fadeIn(
             fade,
