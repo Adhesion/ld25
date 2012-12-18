@@ -108,8 +108,8 @@ var Enemy = me.ObjectEntity.extend({
     fireBullet: function( image, velMult )
     {
         // note collide is false as the player checks its own collision, bullet will be recipient & get oncollision call
-        var bPosX = this.pos.x + ( this.width / 2 ) + 24;
-        var bPosY = this.pos.y + ( this.height / 2 ) + 24;
+        var bPosX = this.pos.x + ( this.width / 2 ) - 24;
+        var bPosY = this.pos.y + ( this.height / 2 ) - 24;
         var bullet = new EnemyBullet( bPosX, bPosY, image || "shooterBullet", 48, 5, [ 0 ], "shooterBullet", false, 48 );
         var dir = this.toPlayer();
         dir.normalize();
@@ -118,13 +118,24 @@ var Enemy = me.ObjectEntity.extend({
         me.game.add( bullet, this.z + 1 );
         me.game.sort();
         me.audio.play( "shoot" );
+    },
+
+    isStuck: function( colres)
+    {
+        var val = ( this.pos.x == this.lastPosX &&
+            this.pos.y == this.lastPosY && ( colres.x != 0 || colres.y != 0 ) );
+
+        this.lastPosX = this.pos.x;
+        this.lastPosY = this.pos.y;
+
+        return val;
     }
 });
 
 var Hugger = Enemy.extend({
     init: function( x, y, settings )
     {
-        this.range = settings.range || 200;
+        this.range = settings.range || 350;
         this.speed = settings.speed || .6;
         settings.image = settings.image || "hugger";
         this.parent( x, y, settings );
@@ -139,8 +150,6 @@ var Hugger = Enemy.extend({
 
         this.posDiffX = 0;
         this.posDiffY = 0;
-
-        console.log( "hugger init" );
 
         var directions = [ "down", "left", "up", "right" ];
         for ( var i = 0; i < directions.length; i++ )
@@ -310,7 +319,14 @@ var Pusher = Enemy.extend({
             this.setCurrentAnimation( this.directionString + "idle" );
         }
 
-        this.updateMovement();
+        var colres = this.updateMovement();
+
+        if ( this.isStuck( colres ) )
+        {
+            this.direction.x *= -1.0;
+            this.direction.y *= -1.0;
+        }
+
         return ( this.vel.x || this.vel.y );
     }
 });
@@ -328,7 +344,7 @@ var Shooter = Enemy.extend(
 
         this.hp = 7;
 
-        this.setMaxVelocity( 3.0, 3.0 );
+        this.setMaxVelocity( 2.0, 2.0 );
 
         this.deathSound = "shootdeath";
 
@@ -363,7 +379,7 @@ var Shooter = Enemy.extend(
 
                 if ( this.shootTimer == 0 && dist > 50 )
                 {
-                    this.fireBullet();
+                    this.fireBullet( "shooterBullet", 8.0 );
                     this.shootTimer = 180;
                 }
             }
@@ -397,6 +413,9 @@ var Doctor = Enemy.extend(
 {
     init: function( x, y, settings )
     {
+		this.startX = x; 
+		this.startY = y;
+		
         this.range = settings.range || 20000;
         this.speed = settings.speed || 0.5;
         settings.spritewidth = settings.spritewidth || 144;
@@ -427,7 +446,8 @@ var Doctor = Enemy.extend(
         this.visible = false;
         this.collidable = false;
         this.enabled = false;
-        this.enable();
+        //this.enable();
+		
     },
 
     enable: function()
@@ -436,13 +456,26 @@ var Doctor = Enemy.extend(
         this.enabled = true;
         this.flicker( 500, function() { this.collidable = true; } );
     },
-
+	
+	disable: function()
+    {
+		this.pos.x = this.startX;
+		this.pos.y = this.startY;
+        this.visible = false;
+        this.enabled = false;
+		
+		var dPosX = this.pos.x + ( this.width / 2 ) - 48;
+		var dPosY = this.pos.y + ( this.height / 2 ) - 48;
+		var deathPart = new PlayerParticle( dPosX, dPosY, "die", 96, 5, [ 0, 1, 2, 3, 4, 5 ], "", false );
+		me.game.add( deathPart, this.z + 1 );
+		me.game.sort();
+    },
+	
     onCollision: function( res, obj )
     {
         if ( obj == me.game.player )
         {
             this.collidable = false;
-            console.log( "player doc hit" );
             me.game.player.stunned = true;
             var duration = 2000;
             me.game.player.flicker( duration );
@@ -552,6 +585,8 @@ var Boss = Enemy.extend(
             }
             this.hitTimer = 10;
             this.collidable = false;
+
+            me.audio.play( "bosshit" );
         }
     },
 
@@ -592,12 +627,11 @@ var Boss = Enemy.extend(
 			}
 			
 			if(this.exploding <= 0){
-				console.log( "GAMEOVER" );
 				me.state.change( me.state.GAMEOVER );
 			}
 			
 		}else{
-	
+
 			if ( this.shootTimer == 0 )
 			{
 				this.fireBullet( "bossBullet", 8.0 );
@@ -606,16 +640,16 @@ var Boss = Enemy.extend(
 			else
 				this.shootTimer--;
 
-			if ( this.shootTimer > 40 )
+            if ( this.hitTimer > 0 )
+            {
+                this.setCurrentAnimation( "hit" );
+                this.hitTimer--;
+                if ( this.hitTimer == 0 )
+                    this.collidable = true;
+            }
+			else if ( this.shootTimer > 40 )
 			{
 				this.setCurrentAnimation( "shoot" );
-			}
-			else if ( this.hitTimer > 0 )
-			{
-				this.setCurrentAnimation( "hit" );
-				this.hitTimer--;
-				if ( this.hitTimer == 0 )
-					this.collidable = true;
 			}
 			else
 			{

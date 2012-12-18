@@ -120,7 +120,7 @@ var TitleScreen = me.ScreenObject.extend({
         }
 
         me.input.bindKey( me.input.KEY.ENTER, "enter", true );
-        //me.audio.playTrack( "ld23-theme" );
+        me.audio.playTrack( "brinkintro" );
     },
 
     update: function() {
@@ -162,7 +162,8 @@ var GameOverScreen = me.ScreenObject.extend(
         {
             this.background = me.loader.getImage( "gameover" );
         }
-        //me.audio.playTrack( "ld23-theme" );
+        me.audio.stopTrack();
+        me.audio.play( "gameover" );
     },
     
     draw: function( context, x, y )
@@ -174,6 +175,8 @@ var GameOverScreen = me.ScreenObject.extend(
 var PlayScreen = me.ScreenObject.extend({
     init: function()
     {
+		this.startTime = 60.0; 
+		
         this.parent( true, true );
     },
 
@@ -188,22 +191,31 @@ var PlayScreen = me.ScreenObject.extend({
         var results = re.exec( input );
         return parseInt(results[1]);
     },
-
-    updateTimer: function() {
-        if( me.game.HUD.getItemValue( "timer" ) <= 0 ) {
-            this.timerStart = me.timer.getTime();
-            me.game.HUD.setItemValue( "timer" , 60.0 );
-            //console.log( "timer 0" );
-        }
-        else {
-            var v = ( 60000 - ( me.timer.getTime() - this.timerStart ) ) / 1000;
-            v = v.toFixed( 1 );
-
-            if( v < 0 ) { v = 0; }
-            me.game.HUD.setItemValue( "timer", v );
-        }
+    
+    resetTime: function( ){
+        me.game.HUD.setItemValue( "timer" , 60.0 );
+        this.timerStart = me.timer.getTime(); 
     },
-
+    
+    addTime: function(t){
+        //me.game.HUD.setItemValue( "timer" , 60.0 );
+        this.timerStart += t * 1000; 
+        if(me.game.doctor.enabled) me.game.doctor.disable();
+    },
+    
+    updateTimer: function() {
+        
+        var v = ( this.startTime * 1000 - ( me.timer.getTime() - this.timerStart ) ) / 1000;
+        v = v.toFixed( 1 );
+        
+        if( v < 0 ) { 
+            v = 0; 
+            if(!me.game.doctor.enabled) me.game.doctor.enable();
+        }
+        
+        me.game.HUD.setItemValue( "timer", v );
+    },
+    
     update: function()
     {
         this.updateTimer();
@@ -225,6 +237,8 @@ var PlayScreen = me.ScreenObject.extend({
         me.game.viewport.fadeOut( fade, duration, function() {
             me.game.HUD.addItem( "timer", new CountDown());
         });
+        
+        this.resetTime();
     },
 
     getCurrentMusic: function()
@@ -239,10 +253,10 @@ var PlayScreen = me.ScreenObject.extend({
         // TODO hack 3rd level is last, boss has gameover condition
         if ( this.getLevel() < 3 )
             this.startLevel( "level" + (1 + this.getLevel())  );
-		else{
-			me.state.change( me.state.GAMEOVER );
-		}
-    },
+        else{
+            me.state.change( me.state.GAMEOVER );
+        }
+},
 
     /**
      * Start the given level.
@@ -254,6 +268,10 @@ var PlayScreen = me.ScreenObject.extend({
         this.doors = [];
         this.orbs = [];
         me.game.HUD.removeItem( "timer" );
+
+        me.audio.stopTrack;
+        if ( level != "testlevel" ) // TODO awful hack right here
+            me.audio.playTrack( level );
 
         me.game.viewport.fadeIn(
             fade,
