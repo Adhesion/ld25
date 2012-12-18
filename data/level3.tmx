@@ -72,23 +72,9 @@
   <object name="hugger" x="4725" y="3105" width="48" height="48"/>
   <object name="hugger" x="4867" y="3207" width="48" height="48"/>
   <object name="hugger" x="4855" y="3067" width="48" height="48"/>
-  <object name="pusher" x="5071" y="3361" width="48" height="48">
-   <properties>
-    <property name="direction" value="left"/>
-    <property name="range" value="300"/>
-    <property name="speed" value="5.8"/>
-   </properties>
-  </object>
-  <object name="pusher" x="5151" y="3361" width="48" height="48">
-   <properties>
-    <property name="direction" value="left"/>
-    <property name="range" value="300"/>
-    <property name="speed" value="5.8"/>
-   </properties>
-  </object>
   <object name="pusher" x="5228" y="3360" width="48" height="48">
    <properties>
-    <property name="direction" value="left"/>
+    <property name="direction" value="down"/>
     <property name="range" value="300"/>
     <property name="speed" value="5.8"/>
    </properties>
@@ -101,6 +87,13 @@
   <object name="door" x="5162" y="3005" width="192" height="96">
    <properties>
     <property name="require" value="11"/>
+   </properties>
+  </object>
+  <object name="pusher" x="5151" y="3360" width="48" height="48">
+   <properties>
+    <property name="direction" value="down"/>
+    <property name="range" value="300"/>
+    <property name="speed" value="5.8"/>
    </properties>
   </object>
  </objectgroup>
@@ -247,6 +240,13 @@
  <objectgroup name="player" width="161" height="138">
   <object name="player" x="1122" y="1234" width="96" height="96"/>
   <object name="boss" x="5066" y="2677" width="192" height="192"/>
+  <object name="pusher" x="5071" y="3359" width="48" height="48">
+   <properties>
+    <property name="direction" value="down"/>
+    <property name="range" value="300"/>
+    <property name="speed" value="5.8"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup name="doors" width="161" height="138">
   <object name="door" x="5088" y="3600" width="192" height="96">
